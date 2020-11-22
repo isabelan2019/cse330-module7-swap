@@ -5,7 +5,7 @@ Student IDs
  
 
 # Rubric
-## Approved by TA: Julia Dickerman (5 points)
+## Approved by TA: Julia Dickerman
 ## Project Description:
 * Creating a transaction and inventory system for SWAP (Sharing With A Purpose), a WashU student-run social enterprise and sustainability exchange store 
 * Customers should be able to view inventory categories and checkout items from the store 
