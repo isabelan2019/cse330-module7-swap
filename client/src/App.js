@@ -4,7 +4,8 @@ import './App.css';
 import Axios from "axios";
 
 function App() {
-  
+  //connecting server to backend through axios: https://medium.com/better-programming/connect-your-express-and-react-applications-using-axios-c35723b6d667 
+
   Axios({
     method: "GET",
     url: "http://localhost:5000/",
