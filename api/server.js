@@ -11,3 +11,15 @@ app.listen(port, () => console.log("Backend server live on " + port));
 app.get("/", (req, res) => {
   res.send({ message: "We did it!" });
 });
+
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+
+// Connection URL
+const url = 'mongodb://mongodb:mongodb@localhost:27017/swap?authSource=admin';
+
+// Use connect method to connect to the Server
+MongoClient.connect(url, function(err, client) {
+  assert.equal(null, err);
+  client.close();
+});
