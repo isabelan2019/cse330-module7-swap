@@ -11,3 +11,45 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+#categoryDisplay {
+  display: flex;
+  flex-wrap: wrap;
+  /* width:100%;
+  height: 80%; */
+}
+
+#categoryDisplay div {
+  width: 250px;
+  margin-left: 10px;
+}
+#categoryDisplay div ul {
+  width: auto;
+}
+li {
+  display: flex;
+}
+li .counter{
+  flex-direction: row-reverse;
+}
+.counter {
+  float: right;
+  text-align: right;
+  /* vertical-align: middle; */
+  max-width: 80px;
+}
+.count {
+  width:20px;
+  text-align: center;  
+}
+.minus {
+  margin-left: 5px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* removes the arrows typically on input numbers */
+  -webkit-appearance: none;
+  margin: 0;
+}
