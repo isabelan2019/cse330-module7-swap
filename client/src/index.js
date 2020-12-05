@@ -44,13 +44,22 @@ class LogIn extends React.Component{
       password:""
     }
   }
+  submitHandler=(event)=>{
+    event.preventDefault();
+
+  }
+
   render(){
     return(
-      <form>
-        <label for="username"> Username: </label>
-        <input type="text" value={this.state.username}/>
-        <label for="password"> Password: </label>
-        <input type="password" value={this.state.password}/>
+      <form onSubmit={this.submitHandler}>
+        <label> 
+          Username: 
+          <input type="text" name="username" value={this.state.username}/>
+        </label>
+        <label> 
+          Password: 
+          <input type="password" name="password" value={this.state.password}/>
+        </label>
         <input type="submit" value="Submit"/>
       </form>
     );
