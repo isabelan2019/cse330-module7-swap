@@ -1,25 +1,34 @@
 //start up code from https://medium.com/better-programming/connect-your-express-and-react-applications-using-axios-c35723b6d667 
-
+//express connection
 const express = require("express"),
   app = express(),
   port = process.env.PORT || 5000,
   cors = require("cors");
+const router = express.Router();
+const { ObjectID } = require("mongodb");
+//mongoose connection
 const mongoose = require('mongoose');
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-const Schema = mongoose.Schema;
+// const MongoClient = require('mongodb').MongoClient;
+// const assert = require('assert');
+// const Schema = mongoose.Schema;
+const Employee=require('./schemas/employeesSchema');
+const InventoryItem=require('./schemas/inventorySchema');
+const Transaction=require('./schemas/transactionsSchema');
+// mongoose.connect("mongodb://localhost/grocerydb", { useNewUrlParser: true, useUnifiedTopology: true })
+//   .catch(error => handleError(error));
 
-mongoose.connect("mongodb://localhost/grocerydb", { useNewUrlParser: true, useUnifiedTopology: true })
-  .catch(error => handleError(error));
-
-const employeesSchema=({
-  _id: mongoose.Schema.Types.ObjectId,
-  firstName: String,
-  lastName: String,
-  username: String,
-  password: String,
+//mongoose set up: https://www.geeksforgeeks.org/nodejs-connect-mongodb-node-app-using-mongoosejs/?ref=lbp
+const url = "mongodb://127.0.0.1:27017/swap";
+mongoose.connect(url, { useUnifiedTopology: true, useNewUrlParser: true });
+mongoose.Promise=global.Promise;
+const connection = mongoose.connection;
+connection.on('connected',function(){
+  console.log("Mongoose connection on");
+});
+connection.on('error',function(err){
+  console.log('Mongoose connection error: ' + err);
 })
-const Employees = mongoose.model('employees',employeesSchema);
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -31,30 +40,57 @@ app.get("/", (req, res) => {
   res.send({ message: "Server connected" });
 });
 
-//send POST request to mongoDB database
+// //send POST request to mongoDB database: https://www.geeksforgeeks.org/nodejs-crud-operations-using-mongoose-and-mongodb-atlas/
 app.post("/createEmployees", (req, res) => {
   if(req.body.verification=="yes"){
-    const newEmployee={
-      firstName:req.body.firstName,
-      lastName:req.body.lastName,
-      username:req.body.username,
-      password:req.body.password
-    };
-    //.then and .catch lines: https://kb.objectrocket.com/mongo-db/how-to-setup-a-nodejs-app-with-mongodb-using-mongoose-227
-    Employees.create(req.body)
-      .then(function(data){
-        res.json(data);
-      })
-      .catch(function(err){
-        res.json(error);
-      })
-    console.log(newEmployee);
+    let newEmployee=new Employee();
+    newEmployee.firstName=req.body.firstName;
+    newEmployee.lastName=req.body.lastName;
+    newEmployee.username=req.body.username;
+    newEmployee.password=req.body.password;
+    newEmployee._id=new ObjectID;
+    
+    newEmployee.save(function(err,data){
+      if(err){
+        console.log(error);
+      }
+      else{
+        res.send("New employee inserted");
+      }
+    })
   }
   else{
     res.send({message:"You do not have permissions to create an employee account."});
   }
 });
 
+app.post("/addInventoryCategory", (req, res)=>{
+  let newInventoryCategory = new InventoryItem;
+  newInventoryCategory._id=new ObjectID;
+  newInventoryCategory.category=req.body.category;
+  newInventoryCategory.totalQuantity=0; 
+  newInventoryCategory.itemTypes=null;
+  newInventoryCategory.save(function(err,data){
+    if(err){
+      console.log(error);
+    }
+    else{
+      res.send("New inventory category inserted");
+    }
+  })
+})
+
+app.get("/getAllInventory",(req,res)=>{
+  InventoryItem.find({}, function(err,data){
+    if(err){
+      console.log(error);
+      console.log("can't work");
+    }
+    else{
+      res.json(data);
+    }
+  })
+})
 //set up code for mongoDB from  https://github.com/mongodb/node-mongodb-native
 // Connection URL
 // const url = 'mongodb://localhost:27017';

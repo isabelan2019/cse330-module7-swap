@@ -22,7 +22,7 @@ function App(){
       <CreateEmployee />
       <h1>SWAP Checkout</h1>
       {/* <CategoryDisplay /> */}
-      <InventoryForm />
+      <InventoryCategory/>
     </div>
   );
 }
@@ -145,6 +145,7 @@ class InventoryCategory extends React.Component{
 
 }
 class InventoryForm extends React.Component{
+  // axios.get('http://localhost:5000/addInventoryCategory', )
   constructor(props){
     super(props);
     this.state={
