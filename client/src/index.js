@@ -236,11 +236,6 @@ class CategoryDisplay extends React.Component {
 
 }
 
-
-
-
-
-
 ReactDOM.render(
   <App />,
   document.getElementById('root')
