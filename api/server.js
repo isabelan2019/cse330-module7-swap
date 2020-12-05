@@ -29,5 +29,70 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
  
   const db = client.db(dbName);
 
-  client.close();
+  insertDocuments(db, function() {
+    // client.close();
+  });
+  findDocuments(db, function() {
+    // client.close();
+  });
+  // updateDocument(db, function() {
+  //   client.close();
+  // });
+  removeDocument(db, function() {
+    client.close();
+  });
 });
+
+const insertDocuments = function(db, callback) {
+  // console.log("hi");
+  // Get the documents collection
+  const collection = db.collection('shirts');
+  // Insert some documents
+  collection.insertMany([
+    {a : 1}, {a : 2}, {a : 3}
+  ], function(err, result) {
+    assert.equal(err, null);
+    assert.equal(3, result.result.n);
+    assert.equal(3, result.ops.length);
+    console.log(db.collection);
+    callback(result);
+  });
+  
+}
+const findDocuments = function(db, callback) {
+  // Get the documents collection
+  const collection = db.collection('shirts');
+  // Find some documents
+  collection.find({}).toArray(function(err, docs) {
+    assert.equal(err, null);
+    console.log("Found the following records");
+    console.log(docs)
+    callback(docs);
+  });
+}
+const removeDocument = function(db, callback) {
+  // Get the documents collection
+  const collection = db.collection('shirts');
+  
+  //deletes all in shirts
+  collection.deleteMany({ },)
+  .then (function(err, result) {
+    assert.equal(err, null);
+   // assert.equal(1, result.result.n);
+    console.log("Removed all");
+    // console.log(result);
+    callback(result);
+  });
+
+  // Delete document where a is 3
+  // collection.deleteMany({ a : 1 }, function(err, result) {
+  //   assert.equal(err, null);
+  //   assert.equal(1, result.result.n);
+  //   console.log("Removed the document with the field a equal to 1");
+  //   // console.log(result);
+  //   callback(result);
+  // });
+  // findDocuments();
+}
+
+// mongo content from https://github.com/mongodb/node-mongodb-native
