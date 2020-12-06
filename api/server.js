@@ -64,35 +64,36 @@ app.post("/createEmployees", (req, res) => {
   }
 });
 
-app.get("/addInventoryCategory", (req, res)=>{
+app.post("/addInventoryCategory", (req, res)=>{
   let newInventoryCategory = new InventoryItem;
   newInventoryCategory._id=new ObjectID;
   newInventoryCategory.category=req.body.category;
   newInventoryCategory.totalQuantity=0; 
-  newInventoryCategory.itemTypes=null;
+  newInventoryCategory.itemTypes=req.body.itemType;
   newInventoryCategory.save(function(err,data){
     if(err){
+      console.log(data);
       console.log(error);
     }
     else{
       res.send("New inventory category inserted");
     }
-  })
-})
+  });
+});
 
-app.post("/getAllInventory",(req,res)=>{
+app.get("/getAllInventory",(req,res)=>{
   InventoryItem.find({}, function(err,data){
     if(err){
       console.log(error);
       console.log("can't work");
     }
     else{
-      // console.log(data);
+      console.log(data);
       res.json(data);
       // res.send("test success");
     }
-  })
-})
+  });
+});
 //set up code for mongoDB from  https://github.com/mongodb/node-mongodb-native
 // Connection URL
 // const url = 'mongodb://localhost:27017';

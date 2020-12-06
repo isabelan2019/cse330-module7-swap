@@ -112,6 +112,7 @@ class InventoryCategory extends React.Component{
     super(props);
     this.state={
       category:"",
+      itemType:""
     };
     this.submitHandler=this.submitHandler.bind(this);
     this.changeHandler=this.changeHandler.bind(this);
@@ -126,6 +127,7 @@ class InventoryCategory extends React.Component{
     event.preventDefault();
     const categoryObj={
       category:this.state.category,
+      itemType:this.state.itemType
     };
     axios.post('http://localhost:5000/addInventoryCategory', categoryObj)
       .then(res => console.log(res.data));
@@ -138,6 +140,10 @@ class InventoryCategory extends React.Component{
           Category:
           <input type="text" name="category" onChange={this.changeHandler} value={this.state.category}/>
         </label>
+        {/* <label>
+          Item Type:
+          <input type="text" name="itemType" onChange={this.changeHandler} value={this.state.itemType}/>
+        </label> */}
         <input type="submit" value="Add"/>
       </form>
     )
@@ -228,10 +234,10 @@ class CategoryDisplay extends React.Component{
       .then(res => {
         // console.log(res.data);
         const data = res.data;
-        console.log(data.length);
+        // console.log(data.length);
         // for ()
         this.setState({categories: data});
-        console.log(this.state.categories);
+        // console.log(this.state.categories);
       });
       
   }
