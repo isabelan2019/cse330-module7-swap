@@ -21,8 +21,8 @@ function App(){
       <NavBar />
       <CreateEmployee />
       <h1>SWAP Checkout</h1>
-      {/* <CategoryDisplay /> */}
       <InventoryCategory/>
+      <CategoryDisplay />
     </div>
   );
 }
@@ -202,6 +202,61 @@ class InventoryForm extends React.Component{
     )
   }
 }
+
+class CategoryDisplay extends React.Component{
+  constructor(props){
+    super(props);
+    this.state={
+      categories:[],
+      // itemType:"",
+    };
+    this.submitHandler=this.submitHandler.bind(this);
+    this.changeHandler=this.changeHandler.bind(this);
+  }
+
+  changeHandler(event){
+    event.preventDefault();
+    this.setState({[event.target.name]:event.target.value});
+  }
+  // const categoryObj = "null";
+  submitHandler(event){
+    event.preventDefault();
+    // const categoryObj={
+    //   category:this.state.category,
+    // };
+    axios.get('http://localhost:5000/getAllInventory')
+      .then(res => {
+        // console.log(res.data);
+        const data = res.data;
+        console.log(data.length);
+        // for ()
+        this.setState({categories: data});
+        console.log(this.state.categories);
+      });
+      
+  }
+
+
+  render(){
+    return(
+      <div>
+        <p>Shirts(hard coded)</p>
+        <ul>
+          {this.state.categories.map(category=> <li>{category.category}</li>)}
+        </ul>
+        {/* {this.state.categories.map((category)=> <p>{category}</p>)} */}
+        {/* <p>{this.state.category}</p> */}
+        <button type="button" onClick={this.submitHandler}>Get inventory</button>      
+      </div>
+    )
+  }
+
+}
+
+
+
+
+
 // class ItemInventory extends React.Component{
 //   constructor(props){
 //     super(props);

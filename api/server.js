@@ -64,7 +64,7 @@ app.post("/createEmployees", (req, res) => {
   }
 });
 
-app.post("/addInventoryCategory", (req, res)=>{
+app.get("/addInventoryCategory", (req, res)=>{
   let newInventoryCategory = new InventoryItem;
   newInventoryCategory._id=new ObjectID;
   newInventoryCategory.category=req.body.category;
@@ -80,14 +80,16 @@ app.post("/addInventoryCategory", (req, res)=>{
   })
 })
 
-app.get("/getAllInventory",(req,res)=>{
+app.post("/getAllInventory",(req,res)=>{
   InventoryItem.find({}, function(err,data){
     if(err){
       console.log(error);
       console.log("can't work");
     }
     else{
+      // console.log(data);
       res.json(data);
+      // res.send("test success");
     }
   })
 })
