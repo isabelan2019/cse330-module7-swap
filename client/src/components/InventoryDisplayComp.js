@@ -4,96 +4,152 @@ import axios from "axios";
 class InventoryDisplay extends React.Component{
     constructor(props){
       super(props);
-      let allCategories=[];
+      // const allCategories=[
+        //{_id:"a", 
+        //category:"shirts", 
+        //itemTypes:[{
+          //itemName:"tshirt", 
+          //quantity:0}]}, 
+        //{_id:"b", 
+        //category:"pants",
+        //itemTypes:[{
+          //itemName:"jeans",
+          //quantity:4}]}, 
+        //{_id:"c",
+        //category:"athleticwear", 
+        //itemTypes:[{itemName:"leggings",
+        //quantity:5}]
+      //}];
+      
+        this.state={
+          inventoryData: []
+        }
+        this.getData=this.getData.bind(this);
+    }
+
+    componentDidMount(){
+      this.getData();
+    }
+
+    getData(){
       axios.get('http://localhost:5000/getAllInventory')
         .then(res => {
-          // console.log(res.data);
-          const data = res.data;
-          console.log(data);
-          
-          // let eachItem=[];
+          let allCategories=[];
+          const data = res.data;  
+          console.log(data);                  
           for (let i in data){
             allCategories.push(data[i]);
-            // for (let j in data.items){
-            //   eachItem.push(data[i].items[j]);
-            // }
+            let allItemTypes=[];
+            for (let j in data[i].itemTypes){
+              allItemTypes.push(data[i].itemTypes[j]);
+            }
+            allCategories[i].itemTypes=allItemTypes;         
           }
-          // this.setState({categories: allCategories});
-          // this.setState({items: eachItem});
-          // console.log(this.state.categories);
-         
+          this.setState({inventoryData:allCategories});          
         });
-        this.state={
-          categories: allCategories
-        }
-        console.log(this.state.categories);
-      // this.getInventory=this.getInventory.bind(this);
     }
-    
-
-    // getInventory(){
-    //   axios.get('http://localhost:5000/getAllInventory')
-    //     .then(res => {
-    //       // console.log(res.data);
-    //       const data = res.data;
-    //       console.log(data);
-    //       let allCategories=[];
-    //       // let eachItem=[];
-    //       for (let i in data){
-    //         allCategories.push(data[i]);
-    //         // for (let j in data.items){
-    //         //   eachItem.push(data[i].items[j]);
-    //         // }
-    //       }
-    //       // this.setState({categories: allCategories});
-    //       // this.setState({items: eachItem});
-    //       // console.log(this.state.categories);
-    //       this.setState=({categories: allCategories});
-    //     });
-    // }
-    // changeHandler(event){
-    //   event.preventDefault();
-    //   this.setState({[event.target.name]:event.target.value});
-    // }
-    // const categoryObj = "null";
-    // getInventory(event){
-    //   event.preventDefault();
-    //   // const categoryObj={
-    //   //   category:this.state.category,
-    //   // };
-      
-        
-    // }
 
     render(){
-      return(
-        <div>
-          {/* <ul>
-            {this.state.categories.map(data=> 
-            <li key={data._id}>
-              {data.category}
-              <table>
-                <tbody>
-                  {this.state.categories.itemTypes.map(items=>
-                    <InventoryTableRow key={items._id} itemName={items.itemName} quantity={items.quantity}/>)}
-                </tbody>
-              </table>
-            </li>)}
-          </ul>
-          <button type="button" onClick={this.submitHandler}>Get inventory</button>       */}
-          {this.state.categories}
-        </div>
-      )
+      // const test=this.state.inventoryData;
+      // console.log(test.category);
+      // const testMap=test.map((data)=><p>{data.category}</p>)
+      // if (this.state.inventoryData.length > 0) 
+      //   {console.log(this.state.inventoryData[0].category)};
+      if(this.state.inventoryData.length==0){
+        return null;
+      }
+      else{
+        return(
+          <div>
+            <div>
+            <ul>
+              {this.state.inventoryData.map((data)=>
+              <li key={data._id}>
+                <h2>{data.category}</h2>
+                <div>
+                <table>
+                  <tbody>
+                  <th>
+                    <td> Item Name </td>
+                    <td> Quantity</td>
+                    <td> Actions</td>
+                  </th>
+                  {data.itemTypes.map((item)=>
+                    <tr id={item._id} key={item._id}>
+                      <td> {item.itemName} </td> 
+                      <td> {item.quantity} </td>
+                      <td> 
+                        <input type="button" value="edit" />
+                        <input type="button" value="delete"/>
+                      </td>
+                    </tr>
+                    // <InventoryTableRow key={items._id} itemName={items.itemName} quantity={items.quantity}/>
+                    )}
+                  </tbody>
+                </table>
+                </div>
+              </li>)}
+            </ul>
+            {/* <button type="button" onClick={this.submitHandler}>Get inventory</button>       */}
+            </div>
+            <InventoryCategory/>
+            <InventoryForm/>
+          </div>
+        )
+      }
+      
     }
   }
 
-  class InventoryTableRow extends React.Component{
+  // class InventoryTableRow extends React.Component{
+  //   render(){
+  //     return(
+  //       <tr key={this.props.items.key}>
+  //         <td> {this.props.items.itemName} </td>
+  //         <td> {this.props.items.quantity} </td>
+  //       </tr>
+  //     )
+  //   }
+  // }
+
+  class InventoryCategory extends React.Component{
+    constructor(props){
+      super(props);
+      this.state={
+        category:"",
+      };
+      this.submitHandler=this.submitHandler.bind(this);
+      this.changeHandler=this.changeHandler.bind(this);
+    }
+
+    changeHandler(event){
+      event.preventDefault();
+      this.setState({[event.target.name]:event.target.value});
+    }
+
+    submitHandler(event){
+      event.preventDefault();
+      const categoryObj={
+        category:this.state.category,
+        itemType:this.state.itemType
+      };
+      axios.post('http://localhost:5000/addInventoryCategory', categoryObj)
+        .then(res => console.log(res.data));
+    }
+
     render(){
       return(
-        <tr key={this.props.items.key}>
-          <td> {this.props.items.itemName} </td>
-          <td> {this.props.items.quantity} </td>
-        </tr>
+        <form onSubmit={this.submitHandler}>
+          <label>
+            Category:
+            <input type="text" name="category" onChange={this.changeHandler} value={this.state.category}/>
+          </label>
+          {/* <label>
+            Item Type:
+            <input type="text" name="itemType" onChange={this.changeHandler} value={this.state.itemType}/>
+          </label> */}
+          <input type="submit" value="Add"/>
+        </form>
       )
     }
   }
@@ -118,7 +174,7 @@ class InventoryDisplay extends React.Component{
     submitHandler(event){
       event.preventDefault();
       const inventoryObj={
-        category:this.state.category,
+        _id:this.state.category,
         itemName:this.state.itemName,
         quantity:this.state.quantity
       };
@@ -129,7 +185,7 @@ class InventoryDisplay extends React.Component{
       this.setState({
         category:"",
         itemName:"",
-        quantity:0
+        quantity:""
       });
     }
   
@@ -139,7 +195,8 @@ class InventoryDisplay extends React.Component{
           {/* change to dropdown */}
           <label>
             Category:
-            <input type="text" name="category" onChange={this.changeHandler} value={this.state.category}/>
+            {/* <input type="text" name="category" onChange={this.changeHandler} value={this.state.category}/> */}
+            <InventoryDropDown onChange={this.changeHandler}/>
           </label>
           <label>
             Item Name:
@@ -155,4 +212,49 @@ class InventoryDisplay extends React.Component{
     }
   }
 
+  class InventoryDropDown extends React.Component{
+    constructor(props){
+      super(props);
+      this.state={
+        inventoryData:[]
+      }
+      // this.changeHandler=this.changeHandler.bind(this);
+    }
+
+    // changeHandler(event){
+    //   event.preventDefault();
+    //   this.setState({[event.target.name]:event.target.value});
+    // }
+
+    componentDidMount(){
+      this.getData();
+    }
+
+    getData(){
+      axios.get('http://localhost:5000/getAllInventory')
+        .then(res => {
+          let allCategories=[];
+          const data = res.data;  
+          console.log(data);                  
+          for (let i in data){
+            allCategories.push(data[i]);
+            let allItemTypes=[];
+            for (let j in data[i].itemTypes){
+              allItemTypes.push(data[i].itemTypes[j]);
+            }
+            allCategories[i].itemTypes=allItemTypes;         
+          }
+          this.setState({inventoryData:allCategories});          
+        });
+    }
+
+    render(){
+      return(
+        <select name="category" onChange={this.props.changeHandler}>
+          {this.state.inventoryData.map((category)=>
+          <option key={category._id} value={category._id}> {category.category} </option>)}
+        </select>
+      )
+    }
+  }
   export default InventoryDisplay;
