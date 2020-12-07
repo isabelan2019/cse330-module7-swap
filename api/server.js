@@ -52,7 +52,7 @@ app.post("/createEmployees", (req, res) => {
     
     newEmployee.save(function(err,data){
       if(err){
-        console.log(error);
+        console.log(err);
       }
       else{
         res.send("New employee inserted");
@@ -69,11 +69,11 @@ app.post("/addInventoryCategory", (req, res)=>{
   newInventoryCategory._id=new ObjectID;
   newInventoryCategory.category=req.body.category;
   newInventoryCategory.totalQuantity=0; 
-  newInventoryCategory.itemTypes=req.body.itemType;
+  newInventoryCategory.itemTypes="";
   newInventoryCategory.save(function(err,data){
     if(err){
       console.log(data);
-      console.log(error);
+      console.log(err);
     }
     else{
       res.send("New inventory category inserted");
@@ -84,7 +84,7 @@ app.post("/addInventoryCategory", (req, res)=>{
 app.get("/getAllInventory",(req,res)=>{
   InventoryItem.find({}, function(err,data){
     if(err){
-      console.log(error);
+      console.log(err);
       console.log("can't work");
     }
     else{
@@ -93,6 +93,28 @@ app.get("/getAllInventory",(req,res)=>{
       // res.send("test success");
     }
   });
+});
+
+app.post("/insertInventory", (req, res)=>{
+  console.log(req.body);
+  const categoryID =req.body._id;
+
+  // InventoryItem.findByIdAndUpdate(categoryID, {
+  //   itemTypes: {
+  //     itemName:req.body.itemName, 
+  //     quantity:req.body.quantity}
+  //   }, function(err,data){
+  //     if(err){
+  //       console.log(err);
+  //       console.log("can't work");
+  //     }
+  //     else{
+  //       console.log(data);
+  //       res.json(data);
+  //       res.send("Inventory Updated");
+  //       // res.send("test success");
+  //     }
+  // })
 });
 //set up code for mongoDB from  https://github.com/mongodb/node-mongodb-native
 // Connection URL
