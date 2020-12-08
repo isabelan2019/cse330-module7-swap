@@ -1,6 +1,6 @@
 import React from "react";
-// import axios from "axios";
-import loginForm from "./LoginFormComp";
+import axios from "axios";
+// import loginForm from "./LoginFormComp";
 
 class Login extends React.Component {
     constructor(props) {
@@ -11,10 +11,28 @@ class Login extends React.Component {
             password:""
         };
         this.showLogin = this.showLogin.bind(this);
+        this.changeHandler = this.changeHandler.bind(this);
+        this.submitHandler = this.submitHandler.bind(this);
+    }
+    changeHandler(event){
+        event.preventDefault();
+        this.setState({[event.target.name]:event.target.value})
+    }
+    submitHandler(event){
+        event.preventDefault();
+        const loginObj={
+            username: this.state.username,
+            password: this.state.password
+        }
+        axios.post('http://localhost:5000/login', loginObj)
+        .then(res => console.log(res.data));
         
+        this.setState({
+            username:"",
+            password:""
+        });
     }
     showLogin(){
-
         this.setState({
             show:!this.state.show
         });
@@ -22,13 +40,32 @@ class Login extends React.Component {
         // show = !show;
     }
     render (){
+        const show = this.state.show;
+        let form ;
+        if (show){
+            form = <LoginForm />
+        }
         return (
             <div id="login">
                 <button onClick={this.showLogin}> Login</button>
-                {this.state.show }
+                {form}
             </div>
         );
     }
     
+}
+
+function LoginForm(props){
+    return(
+        <form onSubmit={props.submitHandler}>
+            <label> Username: 
+                <input type="text" name="username" onChange={props.changeHandler} value={props.username}/>
+            </label>
+            <label> Password: 
+                <input type="password" name="password" onChange={props.changeHandler} value={props.password}/>
+            </label>
+            <input type="submit" value="Submit"/>
+        </form>
+    );
 }
 export default Login;

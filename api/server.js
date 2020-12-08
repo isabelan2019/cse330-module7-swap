@@ -116,6 +116,12 @@ app.post("/insertInventory", (req, res)=>{
   //     }
   // })
 });
+
+app.post("/login", (req, res)=>{
+  console.log(req);
+  console.log(res);
+  console.log("hi");
+});
 //set up code for mongoDB from  https://github.com/mongodb/node-mongodb-native
 // Connection URL
 // const url = 'mongodb://localhost:27017';
