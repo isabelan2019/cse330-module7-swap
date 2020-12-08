@@ -8,7 +8,7 @@ class Login extends React.Component {
         this.state = {
             show: true,
             username:"",
-            password:"",
+            password:""
         };
         this.showLogin = this.showLogin.bind(this);
         
@@ -18,7 +18,7 @@ class Login extends React.Component {
         this.setState({
             show:!this.state.show
         });
-        // console.log(this.state.show);
+        console.log(this.state.show);
         // show = !show;
     }
     render (){
