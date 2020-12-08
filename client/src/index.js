@@ -4,6 +4,8 @@ import './index.css';
 import axios from "axios";
 import InventoryDisplay from './components/InventoryDisplayComp';
 import CreateEmployee from './components/CreateEmployee Comp';
+import Login from './components/LoginComp';
+
 // import InventoryForm from './components/InventoryFormComp';
 // import InventoryCategory from './components/InventoryCategoryComp';
 
@@ -23,6 +25,7 @@ function App(){
   return(
     <div>
       <NavBar />
+      <Login />
       <CreateEmployee />
       <h1>SWAP Checkout</h1>
       <InventoryDisplay />
