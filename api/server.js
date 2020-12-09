@@ -9,12 +9,16 @@ const { NotExtended } = require("http-errors");
 const { ObjectID } = require("mongodb");
 //mongoose connection
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+
 // const MongoClient = require('mongodb').MongoClient;
 // const assert = require('assert');
 // const Schema = mongoose.Schema;
 const Employee=require('./schemas/employeesSchema');
 const InventoryItem=require('./schemas/inventorySchema');
 const Transaction=require('./schemas/transactionsSchema');
+const employeesSchema = require("./schemas/employeesSchema");
 // mongoose.connect("mongodb://localhost/grocerydb", { useNewUrlParser: true, useUnifiedTopology: true })
 //   .catch(error => handleError(error));
 
@@ -142,13 +146,48 @@ app.post("/insertInventory", (req, res)=>{
         res.send("Inventory Updated");
         // res.send("test success");
       }
-  })
+  });
 });
 
 app.post("/login", (req, res)=>{
   console.log(req);
   console.log(res);
   console.log("hi");
+  //hash password 
+  const saltRounds = 10;
+  Employee.pre('save', function(next){
+    // Check if document is new or a new password has been set
+    if (this.isNew || this.isModified('password')) {
+      // Saving reference to this because of changing scopes
+      const document = this;
+      bcrypt.hash(document.password, saltRounds,
+        function(err, hashedPassword) {
+        if (err) {
+          next(err);
+        }
+        else {
+          document.password = hashedPassword;
+          next();
+        }
+      });
+    } else {
+      next();
+    }
+  });
+  employeesSchema.methods.isCorrectPassword = function(password,callback){
+    bcrypt.compare(password, this.password, function(err,same){
+      if (err){
+        callback(err);
+      } else {
+        callback(err,same);
+      }
+    });
+  }
+
+});
+
+app.post("/loggedIn", function(req,res){
+  res.send("you are logged in");
 });
 
 //set up code for mongoDB from  https://github.com/mongodb/node-mongodb-native

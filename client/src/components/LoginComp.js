@@ -24,6 +24,7 @@ class Login extends React.Component {
             username: this.state.username,
             password: this.state.password
         }
+        console.log("sending"+loginObj);
         axios.post('http://localhost:5000/login', loginObj)
         .then(res => console.log(res.data));
         
@@ -43,7 +44,7 @@ class Login extends React.Component {
         const show = this.state.show;
         let form ;
         if (show){
-            form = <LoginForm />
+            form = <LoginForm onSubmit={this.submitHandler}/>
         }
         return (
             <div id="login">
@@ -59,10 +60,10 @@ function LoginForm(props){
     return(
         <form onSubmit={props.submitHandler}>
             <label> Username: 
-                <input type="text" name="username" onChange={props.changeHandler} value={props.username}/>
+                <input type="text" name="loginUsername" onChange={props.changeHandler} value={props.username}/>
             </label>
             <label> Password: 
-                <input type="password" name="password" onChange={props.changeHandler} value={props.password}/>
+                <input type="password" name="loginPassword" onChange={props.changeHandler} value={props.password}/>
             </label>
             <input type="submit" value="Submit"/>
         </form>
