@@ -85,7 +85,20 @@ app.post("/addInventoryCategory", (req, res)=>{
 app.get("/getAllInventory",(req,res)=>{
   InventoryItem.find({}, function(err,data){
     if(err){
-      
+      console.log(err);
+      console.log("can't work");
+    }
+    else{
+      console.log(data);
+      res.json(data);
+      // res.send("test success");
+    }
+  });
+});
+
+app.get("/getTransactions",(req,res)=>{
+  Transaction.find({}, function(err,data){
+    if(err){
       console.log(err);
       console.log("can't work");
     }

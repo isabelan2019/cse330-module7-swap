@@ -45,7 +45,7 @@ class InventoryDisplay extends React.Component{
     }
 
     render(){
-      if(!this.state.inventoryData.length){
+      if(!this.state.inventoryData){
         return null;
       }
       return(
@@ -190,7 +190,7 @@ class InventoryDisplay extends React.Component{
             Category:
             {/* <input type="text" name="category" onChange={this.changeHandler} value={this.state.category}/> */}
             <select name="category" value={this.state.category} onChange={this.changeHandler}>
-            <option value="" selected disabled hidden> 
+            <option value="" disabled hidden> 
                 Select a Category
             </option>
               {this.state.inventoryData.map((category)=>
