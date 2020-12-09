@@ -110,6 +110,14 @@ app.get("/getTransactions",(req,res)=>{
   });
 });
 
+app.post("/deleteInventoryItem",(req,res)=>{
+  console.log(req.body);
+})
+
+app.post("/editInventoryQuantity", (req,res)=>{
+  console.log(req.body);
+})
+
 app.post("/insertInventory", (req, res)=>{
   console.log(req.body);
   const categoryID =req.body._id;
@@ -142,6 +150,7 @@ app.post("/login", (req, res)=>{
   console.log(res);
   console.log("hi");
 });
+
 //set up code for mongoDB from  https://github.com/mongodb/node-mongodb-native
 // Connection URL
 // const url = 'mongodb://localhost:27017';
