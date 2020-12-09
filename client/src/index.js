@@ -5,6 +5,8 @@ import axios from "axios";
 import InventoryDisplay from './components/InventoryDisplayComp';
 import CreateEmployee from './components/CreateEmployee Comp';
 import Login from './components/LoginComp';
+import CustomerCheckout from './components/CheckoutComp';
+import TransactionsLog from './components/TransactionsLogComp';
 
 // import InventoryForm from './components/InventoryFormComp';
 // import InventoryCategory from './components/InventoryCategoryComp';
@@ -27,8 +29,12 @@ function App(){
       <NavBar />
       <Login />
       <CreateEmployee />
-      <h1>SWAP Checkout</h1>
+      <h1>SWAP Inventory</h1>
       <InventoryDisplay />
+      <h1> SWAP Customer Checkout</h1>
+      <CustomerCheckout/>
+      <h1> SWAP Transactions Log</h1>
+      <TransactionsLog/>
     </div>
   );
 }
