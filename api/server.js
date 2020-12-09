@@ -5,6 +5,7 @@ const express = require("express"),
   port = process.env.PORT || 5000,
   cors = require("cors");
 const router = express.Router();
+const { NotExtended } = require("http-errors");
 const { ObjectID } = require("mongodb");
 //mongoose connection
 const mongoose = require('mongoose');
@@ -28,7 +29,7 @@ connection.on('connected',function(){
 connection.on('error',function(err){
   console.log('Mongoose connection error: ' + err);
 })
-
+mongoose.set('useFindAndModify', false);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -69,7 +70,7 @@ app.post("/addInventoryCategory", (req, res)=>{
   newInventoryCategory._id=new ObjectID;
   newInventoryCategory.category=req.body.category;
   newInventoryCategory.totalQuantity=0; 
-  newInventoryCategory.itemTypes="";
+  newInventoryCategory.itemTypes=[];
   newInventoryCategory.save(function(err,data){
     if(err){
       console.log(data);
@@ -84,6 +85,7 @@ app.post("/addInventoryCategory", (req, res)=>{
 app.get("/getAllInventory",(req,res)=>{
   InventoryItem.find({}, function(err,data){
     if(err){
+      
       console.log(err);
       console.log("can't work");
     }
@@ -98,23 +100,28 @@ app.get("/getAllInventory",(req,res)=>{
 app.post("/insertInventory", (req, res)=>{
   console.log(req.body);
   const categoryID =req.body._id;
-
-  // InventoryItem.findByIdAndUpdate(categoryID, {
-  //   itemTypes: {
-  //     itemName:req.body.itemName, 
-  //     quantity:req.body.quantity}
-  //   }, function(err,data){
-  //     if(err){
-  //       console.log(err);
-  //       console.log("can't work");
-  //     }
-  //     else{
-  //       console.log(data);
-  //       res.json(data);
-  //       res.send("Inventory Updated");
-  //       // res.send("test success");
-  //     }
-  // })
+  const itemType={
+    itemName:req.body.itemName,
+    quantity:req.body.quantity,
+    _id:new ObjectID
+  }
+  
+  InventoryItem.findByIdAndUpdate(categoryID, {
+    $push:{itemTypes: itemType}
+    }, function(err,data){
+      if(err){
+        
+        console.log(err);
+        console.log("can't work");
+        return handleError(err);
+      }
+      else{
+        console.log(data);
+        res.json(data);
+        res.send("Inventory Updated");
+        // res.send("test success");
+      }
+  })
 });
 
 app.post("/login", (req, res)=>{
