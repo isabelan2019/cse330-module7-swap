@@ -6,13 +6,12 @@ class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            show: true,
-            username:"",
-            password:""
+            show: true
         };
         this.showLogin = this.showLogin.bind(this);
-        this.changeHandler = this.changeHandler.bind(this);
         this.submitHandler = this.submitHandler.bind(this);
+        this.changeHandler = this.changeHandler.bind(this);
+        
     }
     changeHandler(event){
         event.preventDefault();
@@ -20,18 +19,20 @@ class Login extends React.Component {
     }
     submitHandler(event){
         event.preventDefault();
+
         const loginObj={
             username: this.state.username,
             password: this.state.password
         }
+
         console.log("sending"+loginObj);
         axios.post('http://localhost:5000/login', loginObj)
         .then(res => console.log(res.data));
         
-        this.setState({
-            username:"",
-            password:""
-        });
+        // this.setState({
+        //     username:"",
+        //     password:""
+        // });
     }
     showLogin(){
         this.setState({
@@ -58,14 +59,14 @@ class Login extends React.Component {
 
 function LoginForm(props){
     return(
-        <form onSubmit={props.submitHandler}>
+        <form>
             <label> Username: 
                 <input type="text" name="loginUsername" onChange={props.changeHandler} value={props.username}/>
             </label>
             <label> Password: 
                 <input type="password" name="loginPassword" onChange={props.changeHandler} value={props.password}/>
             </label>
-            <input type="submit" value="Submit"/>
+            <input type="submit" value="Submit" onSubmit={props.submitHandler}/>
         </form>
     );
 }

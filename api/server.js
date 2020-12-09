@@ -10,6 +10,7 @@ const { ObjectID } = require("mongodb");
 //mongoose connection
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const cookieParser = require('cookie-parser');
 
 // const MongoClient = require('mongodb').MongoClient;
@@ -39,7 +40,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.listen(port, () => console.log("Backend server live on " + port));
-
+app.use(cookieParser());
 //check if server is connected
 app.get("/", (req, res) => {
   res.send({ message: "Server connected" });
@@ -48,11 +49,22 @@ app.get("/", (req, res) => {
 // //send POST request to mongoDB database: https://www.geeksforgeeks.org/nodejs-crud-operations-using-mongoose-and-mongodb-atlas/
 app.post("/createEmployees", (req, res) => {
   if(req.body.verification=="yes"){
+ 
     let newEmployee=new Employee();
     newEmployee.firstName=req.body.firstName;
     newEmployee.lastName=req.body.lastName;
     newEmployee.username=req.body.username;
-    newEmployee.password=req.body.password;
+    // newEmployee.password;
+    bcrypt.hash(req.body.password, saltRounds,
+      function (err, hashedPassword){
+        if (err){
+          // res.send("could not hash");
+          res.send(err);
+        }
+        else {
+          newEmployee.password = hashedPassword;
+        }
+      });
     newEmployee._id=new ObjectID;
     
     newEmployee.save(function(err,data){
@@ -135,13 +147,12 @@ app.post("/insertInventory", (req, res)=>{
     $push:{itemTypes: itemType}
     }, function(err,data){
       if(err){
-        
         console.log(err);
         console.log("can't work");
         return handleError(err);
       }
       else{
-        console.log(data);
+        // console.log(data);
         res.json(data);
         res.send("Inventory Updated");
         // res.send("test success");
@@ -150,30 +161,11 @@ app.post("/insertInventory", (req, res)=>{
 });
 
 app.post("/login", (req, res)=>{
-  console.log(req);
-  console.log(res);
-  console.log("hi");
+  console.log(req.body);
+  let loginEmployee=new Employee();
+  loginEmployee.username=req.body.loginUsername;
+  loginEmployee.password=req.body.loginPassword;
   //hash password 
-  const saltRounds = 10;
-  Employee.pre('save', function(next){
-    // Check if document is new or a new password has been set
-    if (this.isNew || this.isModified('password')) {
-      // Saving reference to this because of changing scopes
-      const document = this;
-      bcrypt.hash(document.password, saltRounds,
-        function(err, hashedPassword) {
-        if (err) {
-          next(err);
-        }
-        else {
-          document.password = hashedPassword;
-          next();
-        }
-      });
-    } else {
-      next();
-    }
-  });
   employeesSchema.methods.isCorrectPassword = function(password,callback){
     bcrypt.compare(password, this.password, function(err,same){
       if (err){
@@ -183,7 +175,35 @@ app.post("/login", (req, res)=>{
       }
     });
   }
+  const loginUsername = req.body.loginUsername;
+  Employee.findOne({loginUsername}, function(err, user){
+    if (err){
+      console.error(err);
+      res.send("error finding database");
+    } else if (!user){
+      res.send("username does not exist in database");
+    } else {
+      //user exists 
+      user.isCorrectPassword(loginPassword, function(err, same){
+        if (err) {
+          console.log(error);
+          res.send("error checking password");
+        } else if (!same) {
+          res.send("wrong password");
+        } else {
+          //username and password correct 
+          //set token 
+          const payload = {loginUsername};
+          const token = jwt.sign(payload, secret, {expiresIn: "1h"});
+          res.cookie('token', token, {httpOnly:true})
+          .sendStatus(200);
+          
+        }
 
+      });
+    }
+  });
+  res.send(loginEmployee);
 });
 
 app.post("/loggedIn", function(req,res){
