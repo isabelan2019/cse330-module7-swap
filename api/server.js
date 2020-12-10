@@ -9,17 +9,17 @@ const { NotExtended } = require("http-errors");
 const { ObjectID } = require("mongodb");
 //mongoose connection
 
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const saltRounds = 10;
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 
 // const MongoClient = require('mongodb').MongoClient;
 // const assert = require('assert');
 // const Schema = mongoose.Schema;
-const Employee=require('./schemas/employeesSchema');
-const InventoryItem=require('./schemas/inventorySchema');
-const Transaction=require('./schemas/transactionsSchema');
+const Employee = require("./schemas/employeesSchema");
+const InventoryItem = require("./schemas/inventorySchema");
+const Transaction = require("./schemas/transactionsSchema");
 const employeesSchema = require("./schemas/employeesSchema");
 // mongoose.connect("mongodb://localhost/grocerydb", { useNewUrlParser: true, useUnifiedTopology: true })
 //   .catch(error => handleError(error));
@@ -49,28 +49,24 @@ app.get("/", (req, res) => {
 
 // //send POST request to mongoDB database: https://www.geeksforgeeks.org/nodejs-crud-operations-using-mongoose-and-mongodb-atlas/
 app.post("/createEmployees", (req, res) => {
-
-  if(req.body.verification=="yes"){
- 
-    let newEmployee=new Employee();
-    newEmployee.firstName=req.body.firstName;
-    newEmployee.lastName=req.body.lastName;
-    newEmployee.username=req.body.username;
+  if (req.body.verification == "yes") {
+    let newEmployee = new Employee();
+    newEmployee.firstName = req.body.firstName;
+    newEmployee.lastName = req.body.lastName;
+    newEmployee.username = req.body.username;
     // newEmployee.password;
-    bcrypt.hash(req.body.password, saltRounds,
-      function (err, hashedPassword){
-        if (err){
-          // res.send("could not hash");
-          res.send(err);
-        }
-        else {
-          newEmployee.password = hashedPassword;
-        }
-      });
-    newEmployee._id=new ObjectID;
-    
-    newEmployee.save(function(err,data){
-      if(err){
+    bcrypt.hash(req.body.password, saltRounds, function (err, hashedPassword) {
+      if (err) {
+        // res.send("could not hash");
+        res.send(err);
+      } else {
+        newEmployee.password = hashedPassword;
+      }
+    });
+    newEmployee._id = new ObjectID();
+
+    newEmployee.save(function (err, data) {
+      if (err) {
         console.log(err);
       } else {
         res.send("New employee inserted");
@@ -126,87 +122,117 @@ app.get("/getTransactions", (req, res) => {
 });
 
 app.post("/deleteInventoryItem", (req, res) => {
-  console.log(req.body);
+  const itemID = req.body.itemID;
+  const categoryID = req.body.categoryID;
+  console.log(itemID);
+  InventoryItem.findByIdAndUpdate(
+    categoryID,
+    { $pull: { itemTypes: { _id: itemID } } },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+        res.json(data);
+      }
+    }
+  );
 });
 
 app.post("/editInventoryQuantity", (req, res) => {
   console.log(req.body);
+  const itemID = req.body.itemID;
+  const categoryID = req.body.categoryID;
+  //findOneAndUpdate subdocument: https://stackoverflow.com/questions/21522112/how-to-update-subdocument-with-findoneandupdate
+  InventoryItem.findOneAndUpdate(
+    { _id: categoryID, "itemTypes._id": itemID },
+    {
+      "itemTypes.$.quantity": 5,
+    },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+        res.json(data);
+      }
+    }
+  );
 });
 
 app.post("/insertInventory", (req, res) => {
   console.log(req.body);
 
-  const categoryID =req.body._id;
-  const itemType={
-    itemName:req.body.itemName,
-    quantity:req.body.quantity,
-    _id:new ObjectID
-  }
-  
-  InventoryItem.findByIdAndUpdate(categoryID, {
-    $push:{itemTypes: itemType}
-    }, function(err,data){
-      if(err){
+  const categoryID = req.body._id;
+  const itemType = {
+    itemName: req.body.itemName,
+    quantity: req.body.quantity,
+    _id: new ObjectID(),
+  };
+
+  InventoryItem.findByIdAndUpdate(
+    categoryID,
+    {
+      $push: { itemTypes: itemType },
+    },
+    function (err, data) {
+      if (err) {
         console.log(err);
         console.log("can't work");
         return handleError(err);
-      }
-      else{
+      } else {
         // console.log(data);
         res.json(data);
         // res.send("test success");
       }
-
-  });
+    }
+  );
 });
 
-app.post("/login", (req, res)=>{
+app.post("/login", (req, res) => {
   console.log(req.body);
-  let loginEmployee=new Employee();
-  loginEmployee.username=req.body.loginUsername;
-  loginEmployee.password=req.body.loginPassword;
-  //hash password 
-  employeesSchema.methods.isCorrectPassword = function(password,callback){
-    bcrypt.compare(password, this.password, function(err,same){
-      if (err){
+  let loginEmployee = new Employee();
+  loginEmployee.username = req.body.loginUsername;
+  loginEmployee.password = req.body.loginPassword;
+  //hash password
+  employeesSchema.methods.isCorrectPassword = function (password, callback) {
+    bcrypt.compare(password, this.password, function (err, same) {
+      if (err) {
         callback(err);
       } else {
-        callback(err,same);
+        callback(err, same);
       }
     });
-  }
+  };
   const loginUsername = req.body.loginUsername;
-  Employee.findOne({loginUsername}, function(err, user){
-    if (err){
+  Employee.findOne({ loginUsername }, function (err, user) {
+    if (err) {
       console.error(err);
       res.send("error finding database");
-    } else if (!user){
+    } else if (!user) {
       res.send("username does not exist in database");
     } else {
-      //user exists 
-      user.isCorrectPassword(loginPassword, function(err, same){
+      //user exists
+      user.isCorrectPassword(loginPassword, function (err, same) {
         if (err) {
           console.log(error);
           res.send("error checking password");
         } else if (!same) {
           res.send("wrong password");
         } else {
-          //username and password correct 
-          //set token 
-          const payload = {loginUsername};
-          const token = jwt.sign(payload, secret, {expiresIn: "1h"});
-          res.cookie('token', token, {httpOnly:true})
-          .sendStatus(200);
-          
+          //username and password correct
+          //set token
+          const payload = { loginUsername };
+          const token = jwt.sign(payload, secret, { expiresIn: "1h" });
+          res.cookie("token", token, { httpOnly: true }).sendStatus(200);
         }
-
       });
     }
   });
   res.send(loginEmployee);
 });
 
-app.post("/loggedIn", function(req,res){
+app.post("/loggedIn", function (req, res) {
   res.send("you are logged in");
 });
 

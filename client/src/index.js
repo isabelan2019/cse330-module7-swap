@@ -1,30 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
 import axios from "axios";
-import InventoryDisplay from './components/InventoryDisplayComp';
-import CreateEmployee from './components/CreateEmployee Comp';
-import Login from './components/LoginComp';
-import CustomerCheckout from './components/CheckoutComp';
-import TransactionsLog from './components/TransactionsLogComp';
+import InventoryDisplay from "./components/InventoryDisplayComp";
+import CreateEmployee from "./components/CreateEmployee Comp";
+import Login from "./components/LoginComp";
+import CustomerCheckout from "./components/CheckoutComp";
+import TransactionsLog from "./components/TransactionsLogComp";
+// import InventoryDisplayTest from "./components/test";
 
 // import InventoryForm from './components/InventoryFormComp';
 // import InventoryCategory from './components/InventoryCategoryComp';
 
-
-function App(){
-  //connecting server to backend through axios: https://medium.com/better-programming/connect-your-express-and-react-applications-using-axios-c35723b6d667 
+function App() {
+  //connecting server to backend through axios: https://medium.com/better-programming/connect-your-express-and-react-applications-using-axios-c35723b6d667
   axios({
     method: "GET",
     url: "http://localhost:5000/",
     headers: {
-      "Content-Type": "application/json"
-    }
-  }).then(res => {
+      "Content-Type": "application/json",
+    },
+  }).then((res) => {
     console.log(res.data.message);
   });
 
-  return(
+  return (
     <div>
       <NavBar />
       <Login />
@@ -32,15 +32,15 @@ function App(){
       <h1>SWAP Inventory</h1>
       <InventoryDisplay />
       <h1> SWAP Customer Checkout</h1>
-      <CustomerCheckout/>
+      <CustomerCheckout />
       <h1> SWAP Transactions Log</h1>
-      <TransactionsLog/>
+      <TransactionsLog />
     </div>
   );
 }
 
-function NavBar(){
-  return(
+function NavBar() {
+  return (
     <nav>
       <button> Checkout</button>
       <button> Transactions </button>
@@ -68,7 +68,7 @@ function NavBar(){
 //   }
 //   submitHandler(event){
 //     event.preventDefault();
-    
+
 //     const employeeObj={
 //       firstName:this.state.firstName,
 //       lastName:this.state.lastName,
@@ -79,7 +79,7 @@ function NavBar(){
 
 //     axios.post('http://localhost:5000/createEmployees', employeeObj)
 //       .then(res => console.log(res.data));
-      
+
 //     this.setState({
 //       firstName:"",
 //       lastName:"",
@@ -89,34 +89,34 @@ function NavBar(){
 //     });
 
 //   }
-    
+
 //   render(){
 //     return(
 //       <form onSubmit={this.submitHandler}>
-//          <label> 
+//          <label>
 //           First Name:
 //           <input type="text" name="firstName" onChange={this.changeHandler} value={this.state.firstName}/>
 //         </label>
-//         <label> 
+//         <label>
 //           Last Name:
 //           <input type="text" name="lastName" onChange={this.changeHandler} value={this.state.lastName}/>
 //         </label>
-//         <label> 
-//           Username: 
+//         <label>
+//           Username:
 //           <input type="text" name="username" onChange={this.changeHandler} value={this.state.username}/>
 //         </label>
-//         <label> 
-//           Password: 
+//         <label>
+//           Password:
 //           <input type="password" name="password" onChange={this.changeHandler} value={this.state.password}/>
 //         </label>
-//         <label> 
-//           Verification Code: 
+//         <label>
+//           Verification Code:
 //           <input type="password" name="verification" onChange={this.changeHandler} value={this.state.verification}/>
 //         </label>
 //         <input type="submit" value="Submit"/>
 //       </form>
 //     );
-//   } 
+//   }
 // }
 
 // class InventoryCategory extends React.Component{
@@ -254,7 +254,7 @@ function NavBar(){
 //         this.setState({categories: allCategories});
 //         // console.log(this.state.categories);
 //       });
-      
+
 //   }
 
 //   render(){
@@ -263,16 +263,12 @@ function NavBar(){
 //         <ul>
 //           {this.state.categories.map(data=> <li key={data._id}>{data.category}</li>)}
 //         </ul>
-//         <button type="button" onClick={this.submitHandler}>Get inventory</button>      
+//         <button type="button" onClick={this.submitHandler}>Get inventory</button>
 //       </div>
 //     )
 //   }
 
 // }
-
-
-
-
 
 // class ItemInventory extends React.Component{
 //   constructor(props){
@@ -286,7 +282,7 @@ function NavBar(){
 //             <th> Item Type </th>
 //             <th> Quantity </th>
 //           </tr>
-           
+
 //         </tbody>
 //       </table>
 //     )
@@ -316,18 +312,18 @@ function NavBar(){
 //         val: state.val - 1
 //       }));
 //     }
-    
+
 //     //call item inventory to update the dynamic display
 //   }
 
 //   render(){
 //     return (
 //       <div id="categoryDisplay">
-        
+
 //         <div>
 //           <label for="shirts">Shirts</label>
 //           <ul id="shirts">
-//             <li>tee shirt 
+//             <li>tee shirt
 //               <div class="counter">
 //                 <button class="minus" onClick={this.minus}>-</button>
 //                 <input class="count" type="number" min="0" value={this.state.val}></input>
@@ -345,7 +341,7 @@ function NavBar(){
 //             <li>sweater</li>
 //           </ul>
 //         </div>
-    
+
 //         <div>
 //           <label for="pants">Pants</label>
 //           <ul id="pants">
@@ -368,7 +364,7 @@ function NavBar(){
 //             <li>long skirts</li>
 //           </ul>
 //         </div>
-        
+
 //         <div>
 //           <label for="jackets">jackets</label>
 //           <ul id="jackets">
@@ -381,7 +377,7 @@ function NavBar(){
 //             <li>winter coat</li>
 //           </ul>
 //         </div>
-        
+
 //         <div>
 //           <label for="footwear">Footwear</label>
 //           <ul id="footwear">
@@ -444,14 +440,11 @@ function NavBar(){
 //             <li>write in<input type="text" id="misc-write"></input></li>
 //           </ul>
 //         </div>
-//       </div>      
+//       </div>
 //     );
-     
+
 //   }
 
 // }
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-);
+ReactDOM.render(<App />, document.getElementById("root"));
