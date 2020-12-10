@@ -1,4 +1,4 @@
-//start up code from https://medium.com/better-programming/connect-your-express-and-react-applications-using-axios-c35723b6d667 
+//start up code from https://medium.com/better-programming/connect-your-express-and-react-applications-using-axios-c35723b6d667
 //express connection
 const express = require("express"),
   app = express(),
@@ -8,28 +8,28 @@ const router = express.Router();
 const { NotExtended } = require("http-errors");
 const { ObjectID } = require("mongodb");
 //mongoose connection
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 // const MongoClient = require('mongodb').MongoClient;
 // const assert = require('assert');
 // const Schema = mongoose.Schema;
-const Employee=require('./schemas/employeesSchema');
-const InventoryItem=require('./schemas/inventorySchema');
-const Transaction=require('./schemas/transactionsSchema');
+const Employee = require("./schemas/employeesSchema");
+const InventoryItem = require("./schemas/inventorySchema");
+const Transaction = require("./schemas/transactionsSchema");
 // mongoose.connect("mongodb://localhost/grocerydb", { useNewUrlParser: true, useUnifiedTopology: true })
 //   .catch(error => handleError(error));
 
 //mongoose set up: https://www.geeksforgeeks.org/nodejs-connect-mongodb-node-app-using-mongoosejs/?ref=lbp
 const url = "mongodb://127.0.0.1:27017/swap";
 mongoose.connect(url, { useUnifiedTopology: true, useNewUrlParser: true });
-mongoose.Promise=global.Promise;
+mongoose.Promise = global.Promise;
 const connection = mongoose.connection;
-connection.on('connected',function(){
+connection.on("connected", function () {
   console.log("Mongoose connection on");
 });
-connection.on('error',function(err){
-  console.log('Mongoose connection error: ' + err);
-})
-mongoose.set('useFindAndModify', false);
+connection.on("error", function (err) {
+  console.log("Mongoose connection error: " + err);
+});
+mongoose.set("useFindAndModify", false);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -43,52 +43,50 @@ app.get("/", (req, res) => {
 
 // //send POST request to mongoDB database: https://www.geeksforgeeks.org/nodejs-crud-operations-using-mongoose-and-mongodb-atlas/
 app.post("/createEmployees", (req, res) => {
-  if(req.body.verification=="yes"){
-    let newEmployee=new Employee();
-    newEmployee.firstName=req.body.firstName;
-    newEmployee.lastName=req.body.lastName;
-    newEmployee.username=req.body.username;
-    newEmployee.password=req.body.password;
-    newEmployee._id=new ObjectID;
-    
-    newEmployee.save(function(err,data){
-      if(err){
+  if (req.body.verification == "yes") {
+    let newEmployee = new Employee();
+    newEmployee.firstName = req.body.firstName;
+    newEmployee.lastName = req.body.lastName;
+    newEmployee.username = req.body.username;
+    newEmployee.password = req.body.password;
+    newEmployee._id = new ObjectID();
+
+    newEmployee.save(function (err, data) {
+      if (err) {
         console.log(err);
-      }
-      else{
+      } else {
         res.send("New employee inserted");
       }
-    })
-  }
-  else{
-    res.send({message:"You do not have permissions to create an employee account."});
+    });
+  } else {
+    res.send({
+      message: "You do not have permissions to create an employee account.",
+    });
   }
 });
 
-app.post("/addInventoryCategory", (req, res)=>{
-  let newInventoryCategory = new InventoryItem;
-  newInventoryCategory._id=new ObjectID;
-  newInventoryCategory.category=req.body.category;
-  newInventoryCategory.totalQuantity=0; 
-  newInventoryCategory.itemTypes=[];
-  newInventoryCategory.save(function(err,data){
-    if(err){
+app.post("/addInventoryCategory", (req, res) => {
+  let newInventoryCategory = new InventoryItem();
+  newInventoryCategory._id = new ObjectID();
+  newInventoryCategory.category = req.body.category;
+  newInventoryCategory.totalQuantity = 0;
+  newInventoryCategory.itemTypes = [];
+  newInventoryCategory.save(function (err, data) {
+    if (err) {
       console.log(data);
       console.log(err);
-    }
-    else{
+    } else {
       res.send("New inventory category inserted");
     }
   });
 });
 
-app.get("/getAllInventory",(req,res)=>{
-  InventoryItem.find({}, function(err,data){
-    if(err){
+app.get("/getAllInventory", (req, res) => {
+  InventoryItem.find({}, function (err, data) {
+    if (err) {
       console.log(err);
       console.log("can't work");
-    }
-    else{
+    } else {
       console.log(data);
       res.json(data);
       // res.send("test success");
@@ -96,13 +94,12 @@ app.get("/getAllInventory",(req,res)=>{
   });
 });
 
-app.get("/getTransactions",(req,res)=>{
-  Transaction.find({}, function(err,data){
-    if(err){
+app.get("/getTransactions", (req, res) => {
+  Transaction.find({}, function (err, data) {
+    if (err) {
       console.log(err);
       console.log("can't work");
-    }
-    else{
+    } else {
       console.log(data);
       res.json(data);
       // res.send("test success");
@@ -110,42 +107,42 @@ app.get("/getTransactions",(req,res)=>{
   });
 });
 
-app.post("/deleteInventoryItem",(req,res)=>{
+app.post("/deleteInventoryItem", (req, res) => {
   console.log(req.body);
-})
+});
 
-app.post("/editInventoryQuantity", (req,res)=>{
+app.post("/editInventoryQuantity", (req, res) => {
   console.log(req.body);
-})
+});
 
-app.post("/insertInventory", (req, res)=>{
+app.post("/insertInventory", (req, res) => {
   console.log(req.body);
-  const categoryID =req.body._id;
-  const itemType={
-    itemName:req.body.itemName,
-    quantity:req.body.quantity,
-    _id:new ObjectID
-  }
-  
-  InventoryItem.findByIdAndUpdate(categoryID, {
-    $push:{itemTypes: itemType}
-    }, function(err,data){
-      if(err){
-        
+  const categoryID = req.body._id;
+  const itemType = {
+    itemName: req.body.itemName,
+    quantity: req.body.quantity,
+    _id: new ObjectID(),
+  };
+
+  InventoryItem.findByIdAndUpdate(
+    categoryID,
+    {
+      $push: { itemTypes: itemType },
+    },
+    function (err, data) {
+      if (err) {
         console.log(err);
         console.log("can't work");
-        return handleError(err);
-      }
-      else{
+      } else {
         console.log(data);
         res.json(data);
-        res.send("Inventory Updated");
         // res.send("test success");
       }
-  })
+    }
+  );
 });
 
-app.post("/login", (req, res)=>{
+app.post("/login", (req, res) => {
   console.log(req);
   console.log(res);
   console.log("hi");
@@ -166,7 +163,6 @@ app.post("/login", (req, res)=>{
 //   client.close();
 // });
 
-
 // const insertDocuments = function(db, callback) {
 //   // console.log("hi");
 //   // Get the documents collection
@@ -181,7 +177,7 @@ app.post("/login", (req, res)=>{
 //     console.log(db.collection);
 //     callback(result);
 //   });
-  
+
 // }
 // const findDocuments = function(db, callback) {
 //   // Get the documents collection
@@ -197,7 +193,7 @@ app.post("/login", (req, res)=>{
 // const removeDocument = function(db, callback) {
 //   // Get the documents collection
 //   const collection = db.collection('shirts');
-  
+
 //   //deletes all in shirts
 //   collection.deleteMany({ },)
 //   .then (function(err, result) {
@@ -208,14 +204,13 @@ app.post("/login", (req, res)=>{
 //     callback(result);
 //   });
 
-  // Delete document where a is 3
-  // collection.deleteMany({ a : 1 }, function(err, result) {
-  //   assert.equal(err, null);
-  //   assert.equal(1, result.result.n);
-  //   console.log("Removed the document with the field a equal to 1");
-  //   // console.log(result);
-  //   callback(result);
-  // });
-  // findDocuments();
+// Delete document where a is 3
+// collection.deleteMany({ a : 1 }, function(err, result) {
+//   assert.equal(err, null);
+//   assert.equal(1, result.result.n);
+//   console.log("Removed the document with the field a equal to 1");
+//   // console.log(result);
+//   callback(result);
+// });
+// findDocuments();
 // }
-

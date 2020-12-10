@@ -8,11 +8,12 @@ class CustomerCheckout extends React.Component{
             firstName:"",
             lastName:"",
             email:"",
-            date: new Date,
+            date: new Date(),
             items:[],
             inventoryData:[]
         }
     }
+   
    render(){
        return(
            <div>
@@ -28,7 +29,8 @@ class CustomerCheckout extends React.Component{
                    Email:
                    <input type="text" name="firstName"/>
                </label>
-               <ItemLine/>
+               <button> Add Item </button>
+               <ItemLine />
            </div>
        )
    }
@@ -36,8 +38,9 @@ class CustomerCheckout extends React.Component{
 
 
 class ItemLine extends React.Component{
-
+    
     render(){
+        
         return (
             <div>
                 <label> Item:
