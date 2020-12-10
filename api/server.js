@@ -13,6 +13,9 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const cookieParser = require("cookie-parser");
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const cryptoRandom = crypto.randomBytes(64).toString('hex');
 
 // const MongoClient = require('mongodb').MongoClient;
 // const assert = require('assert');
@@ -54,6 +57,7 @@ app.post("/createEmployees", (req, res) => {
     newEmployee.firstName = req.body.firstName;
     newEmployee.lastName = req.body.lastName;
     newEmployee.username = req.body.username;
+    newEmployee._id = new ObjectID();
     // newEmployee.password;
     bcrypt.hash(req.body.password, saltRounds, function (err, hashedPassword) {
       if (err) {
@@ -61,15 +65,13 @@ app.post("/createEmployees", (req, res) => {
         res.send(err);
       } else {
         newEmployee.password = hashedPassword;
-      }
-    });
-    newEmployee._id = new ObjectID();
-
-    newEmployee.save(function (err, data) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.json(data);
+        newEmployee.save(function (err, data) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.json(data);
+          }
+        });
       }
     });
   } else {
@@ -190,21 +192,10 @@ app.post("/insertInventory", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  console.log("body"+req.body);
-  let loginEmployee = new Employee();
-  loginEmployee.username = req.body.username;
-  loginEmployee.password = req.body.password;
-  //hash password
-  // Employee.methods.isCorrectPassword = function (password, callback) {
-  //   bcrypt.compare(password, this.password, function (err, same) {
-  //     if (err) {
-  //       callback(err);
-  //     } else {
-  //       callback(err, same);
-  //     }
-  //   });
-  // };
+  console.log("body"+JSON.stringify(req.body));
+    
   const loginUsername = req.body.loginUsername;
+  const loginPassword = req.body.loginPassword;
   Employee.findOne({ username: loginUsername }, function (err, user) {
     if (err) {
       console.error(err);
@@ -213,24 +204,34 @@ app.post("/login", (req, res) => {
       res.send("username does not exist in database");
     } else {
       //user exists
-      res.send("user exists"+ user);
-      // user.isCorrectPassword(loginPassword, function (err, same) {
-      //   if (err) {
-      //     console.log(error);
-      //     res.send("error checking password");
-      //   } else if (!same) {
-      //     res.send("wrong password");
-      //   } else {
-      //     //username and password correct
-      //     //set token
-      //     const payload = { loginUsername };
-      //     const token = jwt.sign(payload, secret, { expiresIn: "1h" });
-      //     res.cookie("token", token, { httpOnly: true }).sendStatus(200);
-      //   }
-      // });
+      //hash password
+      console.log("user exists "+user.password);
+      bcrypt.compare(loginPassword, user.password, function(err, same){
+        if (err) {
+          // callback(err);
+          res.send("error comparing passwords")
+        } else {
+          // callback(err, same);
+          console.log(user.password);
+          console.log(loginPassword);
+
+          if (!same){
+            const isLoggedIn= false;
+            res.send(isLoggedIn);
+
+          } else {
+            const isLoggedIn= true;
+            // res.send(isLoggedIn);
+            const payload = user.username;
+            const token = jwt.sign(payload, cryptoRandom);
+            res.cookie('token', token, {httpOnly:true})
+            .send(isLoggedIn);
+            console.log(token);
+          }
+        }
+      });
     }
   });
-  // res.send(loginEmployee);
 });
 
 app.post("/loggedIn", function (req, res) {

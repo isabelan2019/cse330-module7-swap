@@ -7,6 +7,7 @@ import CreateEmployee from "./components/CreateEmployee Comp";
 import Login from "./components/LoginComp";
 import CustomerCheckout from "./components/CheckoutComp";
 import TransactionsLog from "./components/TransactionsLogComp";
+import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
 // import InventoryDisplayTest from "./components/test";
 
 // import InventoryForm from './components/InventoryFormComp';
@@ -29,24 +30,42 @@ function App() {
       <NavBar />
       <Login />
       <CreateEmployee />
-      <h1>SWAP Inventory</h1>
-      <InventoryDisplay />
+      {/* <h1>SWAP Inventory</h1>
+      <InventoryDisplay /> */}
       <h1> SWAP Customer Checkout</h1>
       <CustomerCheckout />
-      <h1> SWAP Transactions Log</h1>
-      <TransactionsLog />
+      {/* <h1> SWAP Transactions Log</h1>
+      <TransactionsLog /> */}
     </div>
   );
 }
 
-function NavBar() {
-  return (
-    <nav>
-      <button> Checkout</button>
-      <button> Transactions </button>
-      <button> Inventory Log</button>
-    </nav>
-  );
+class NavBar extends React.Component {
+  // constructor(props){
+  //   super(props);
+  // }
+  render(){
+    return (
+      <div>
+        <Router>
+        <nav>
+          <button><Link to="/">Home</Link></button>
+          <button> <Link to="/checkout">Checkout</Link></button>
+          <button> <Link to="/transactions">Transactions</Link> </button>
+          <button> <Link to="/inventory">Inventory Log</Link></button>
+        </nav>
+        <Switch>
+          <Route path="/checkout" component={CustomerCheckout}/>
+          <Route path="/transactions" component={TransactionsLog}/>
+          <Route path="/inventory" component={InventoryDisplay}/>
+        </Switch>
+        </Router>
+      </div>
+
+    );
+
+  }
+  
 }
 
 // class CreateEmployee extends React.Component{
@@ -313,138 +332,5 @@ function NavBar() {
 //       }));
 //     }
 
-//     //call item inventory to update the dynamic display
-//   }
-
-//   render(){
-//     return (
-//       <div id="categoryDisplay">
-
-//         <div>
-//           <label for="shirts">Shirts</label>
-//           <ul id="shirts">
-//             <li>tee shirt
-//               <div class="counter">
-//                 <button class="minus" onClick={this.minus}>-</button>
-//                 <input class="count" type="number" min="0" value={this.state.val}></input>
-//                 <button class="plus" onClick={this.plus}>+</button>
-//               </div>
-//             </li>
-//             <li>crop-top / bralette<div class="counter">
-//                 <button class="minus" onClick={this.minus}>-</button>
-//                 <input class="count" type="number" min="0" value={this.state.val}></input>
-//                 <button class="plus" onClick={this.plus}>+</button>
-//               </div></li>
-//             <li>tank top</li>
-//             <li>long sleeve</li>
-//             <li>button-down</li>
-//             <li>sweater</li>
-//           </ul>
-//         </div>
-
-//         <div>
-//           <label for="pants">Pants</label>
-//           <ul id="pants">
-//             <li>jeans</li>
-//             <li>shorts</li>
-//             <li>sweatpants</li>
-//             <li>leggings</li>
-//             <li>khakis</li>
-//           </ul>
-//         </div>
-
-//         <div>
-//           <label for="dresses-skirts">Dresses/Skirts</label>
-//           <ul id="dresses-skirts">
-//             <li>short dress</li>
-//             <li>long dress</li>
-//             <li>jumpsuit</li>
-//             <li>romper</li>
-//             <li>short skirts</li>
-//             <li>long skirts</li>
-//           </ul>
-//         </div>
-
-//         <div>
-//           <label for="jackets">jackets</label>
-//           <ul id="jackets">
-//             <li>denim</li>
-//             <li>blazer</li>
-//             <li>hoodie</li>
-//             <li>zip-up</li>
-//             <li>cardigan</li>
-//             <li>fleece</li>
-//             <li>winter coat</li>
-//           </ul>
-//         </div>
-
-//         <div>
-//           <label for="footwear">Footwear</label>
-//           <ul id="footwear">
-//             <li>socks</li>
-//             <li>sneakers</li>
-//             <li>boots</li>
-//             <li>heels</li>
-//             <li>dress shoes</li>
-//             <li>open toed (e.g. sandals, flip-flops)</li>
-//           </ul>
-//         </div>
-
-//         <div>
-//           <label for="accessories">Accessories</label>
-//           <ul id="accessories">
-//             <li>necklace</li>
-//             <li>bracelet</li>
-//             <li>scarves</li>
-//             <li>hats</li>
-//             <li>gloves</li>
-//             <li>sunglasses</li>
-//             <li>purse</li>
-//             <li>tote bag</li>
-//             <li>drawstring bag</li>
-//             <li>umbrella</li>
-//             <li>helmet</li>
-//           </ul>
-//         </div>
-//         <div>
-//           <label for="office">Office Items</label>
-//           <ul id="office">
-//             <li>book</li>
-//             <li>textbook</li>
-//             <li>notebook</li>
-//             <li>pen</li>
-//             <li>pencil</li>
-//             <li>backpack</li>
-//             <li>write in <input type="text" id="office-write"></input></li>
-//           </ul>
-//         </div>
-//         <div>
-//           <label for="household">Household Items</label>
-//           <ul id="household">
-//             <li>water bottle</li>
-//             <li>cup / mug</li>
-//             <li>bowl / plate</li>
-//             <li>utensils</li>
-//             <li>bedding</li>
-//             <li>storage caddy</li>
-//             <li>towel</li>
-//             <li>pot / pan</li>
-//             <li>hangers</li>
-//             <li>write in <input type="text" id="household-write"></input></li>
-//           </ul>
-//         </div>
-//         <div>
-//           <label for="miscellaneous">Miscellaneous</label>
-//           <ul id="miscellaneous">
-//             <li>CD</li>
-//             <li>write in<input type="text" id="misc-write"></input></li>
-//           </ul>
-//         </div>
-//       </div>
-//     );
-
-//   }
-
-// }
 
 ReactDOM.render(<App />, document.getElementById("root"));

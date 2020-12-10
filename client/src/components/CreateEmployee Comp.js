@@ -66,7 +66,7 @@ class CreateEmployee extends React.Component{
             Verification Code: 
             <input type="password" name="verification" onChange={this.changeHandler} value={this.state.verification}/>
           </label>
-          <input type="submit" value="Submit"/>
+          <input type="submit" value="Make Account"/>
         </form>
       );
     } 

@@ -15,7 +15,7 @@ class Login extends React.Component {
     }
     changeHandler(loginInfo){
         // event.preventDefault();
-        console.log(loginInfo);
+        // console.log(loginInfo);
         this.setState({
             loginUsername:loginInfo.loginUsername,
             loginPassword:loginInfo.loginPassword
@@ -102,7 +102,7 @@ class LoginForm extends React.Component{
                 <label> Password: 
                     <input type="password" name="loginPassword" onChange={this.changeHandler} value={this.props.loginPassword}/>
                 </label>
-                <input type="submit" value="Login"/>
+                <input type="submit" value="Log In"/>
             </form>
     
         );  
