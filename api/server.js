@@ -190,22 +190,22 @@ app.post("/insertInventory", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  console.log(req.body);
+  console.log("body"+req.body);
   let loginEmployee = new Employee();
-  loginEmployee.username = req.body.loginUsername;
-  loginEmployee.password = req.body.loginPassword;
+  loginEmployee.username = req.body.username;
+  loginEmployee.password = req.body.password;
   //hash password
-  employeesSchema.methods.isCorrectPassword = function (password, callback) {
-    bcrypt.compare(password, this.password, function (err, same) {
-      if (err) {
-        callback(err);
-      } else {
-        callback(err, same);
-      }
-    });
-  };
+  // Employee.methods.isCorrectPassword = function (password, callback) {
+  //   bcrypt.compare(password, this.password, function (err, same) {
+  //     if (err) {
+  //       callback(err);
+  //     } else {
+  //       callback(err, same);
+  //     }
+  //   });
+  // };
   const loginUsername = req.body.loginUsername;
-  Employee.findOne({ loginUsername }, function (err, user) {
+  Employee.findOne({ username: loginUsername }, function (err, user) {
     if (err) {
       console.error(err);
       res.send("error finding database");
@@ -213,23 +213,24 @@ app.post("/login", (req, res) => {
       res.send("username does not exist in database");
     } else {
       //user exists
-      user.isCorrectPassword(loginPassword, function (err, same) {
-        if (err) {
-          console.log(error);
-          res.send("error checking password");
-        } else if (!same) {
-          res.send("wrong password");
-        } else {
-          //username and password correct
-          //set token
-          const payload = { loginUsername };
-          const token = jwt.sign(payload, secret, { expiresIn: "1h" });
-          res.cookie("token", token, { httpOnly: true }).sendStatus(200);
-        }
-      });
+      res.send("user exists"+ user);
+      // user.isCorrectPassword(loginPassword, function (err, same) {
+      //   if (err) {
+      //     console.log(error);
+      //     res.send("error checking password");
+      //   } else if (!same) {
+      //     res.send("wrong password");
+      //   } else {
+      //     //username and password correct
+      //     //set token
+      //     const payload = { loginUsername };
+      //     const token = jwt.sign(payload, secret, { expiresIn: "1h" });
+      //     res.cookie("token", token, { httpOnly: true }).sendStatus(200);
+      //   }
+      // });
     }
   });
-  res.send(loginEmployee);
+  // res.send(loginEmployee);
 });
 
 app.post("/loggedIn", function (req, res) {
