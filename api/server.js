@@ -69,7 +69,7 @@ app.post("/createEmployees", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        res.send("New employee inserted");
+        res.json(data);
       }
     });
   } else {
@@ -90,7 +90,7 @@ app.post("/addInventoryCategory", (req, res) => {
       console.log(data);
       console.log(err);
     } else {
-      res.send("New inventory category inserted");
+      res.json(data);
     }
   });
 });

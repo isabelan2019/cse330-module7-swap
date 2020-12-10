@@ -47,8 +47,8 @@ class InventoryPage extends React.Component {
   //   this.getData();
   // }
 
-  handleCategoryChange(newCategory) {
-    this.setState({ category: newCategory });
+  handleCategoryChange(newCategoryValue) {
+    this.setState({ newCategory: newCategoryValue });
   }
 
   submitCategory(newCategory) {
@@ -64,6 +64,8 @@ class InventoryPage extends React.Component {
         //   console.log(prev);
         //   return { category: prev.categories.push(res) };
         // });
+        this.getData();
+        this.setState({ newCategory: "" });
       });
   }
 
@@ -75,12 +77,11 @@ class InventoryPage extends React.Component {
     });
   }
 
-  submitInventoryForm(event) {
-    event.preventDefault();
+  submitInventoryForm(inventoryForm) {
     const inventoryObj = {
-      _id: this.state.category,
-      itemName: this.state.itemName,
-      quantity: this.state.quantity,
+      _id: inventoryForm.category,
+      itemName: inventoryForm.itemName,
+      quantity: inventoryForm.quantity,
     };
 
     axios
@@ -133,7 +134,7 @@ class InventoryPage extends React.Component {
         <InventoryCategory
           onCategoryChange={this.handleCategoryChange}
           submitCategory={this.submitCategory}
-          newCategoryValue={this.state.category}
+          newCategoryValue={this.state.newCategory}
         />
         <InventoryForm
           onInventoryChange={this.handleInventoryChange}
@@ -154,7 +155,7 @@ class InventoryCategory extends React.Component {
     // this.state = {
     //   category: "",
     // };
-    // this.submitHandler = this.submitHandler.bind(this);
+    this.submitHandler = this.submitHandler.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
   }
 
@@ -164,11 +165,10 @@ class InventoryCategory extends React.Component {
     // this.setState({ [event.target.name]: event.target.value });
   }
 
-  // submitHandler(event) {
-  //   event.preventDefault();
-  // const categoryObj = {
-  //   category: this.props.category,
-  // };
+  submitHandler(event) {
+    event.preventDefault();
+    this.props.submitCategory(this.props.newCategoryValue);
+  }
 
   // axios
   //   .post("http://localhost:5000/addInventoryCategory", categoryObj)
@@ -183,14 +183,14 @@ class InventoryCategory extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.props.submitCategory}>
+      <form onSubmit={this.submitHandler}>
         <label>
           Category:
           <input
             type="text"
             name="category"
             onChange={this.changeHandler}
-            value={this.props.categoryValue}
+            value={this.props.newCategoryValue}
           />
         </label>
         <input type="submit" value="Add" />
@@ -208,7 +208,7 @@ class InventoryForm extends React.Component {
     //   quantity: "",
     //   inventoryData: [],
     // };
-    // this.submitHandler = this.submitHandler.bind(this);
+    this.submitHandler = this.submitHandler.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
   }
 
@@ -218,12 +218,15 @@ class InventoryForm extends React.Component {
     this.props.onInventoryChange(event.target.value);
   }
 
-  // submitHandler(event) {
-  //   event.preventDefault();
-  //   const inventoryObj = {
-  //     [event.target.name]: event.target.value,
-  //   };
-  // }
+  submitHandler(event) {
+    event.preventDefault();
+    const inventoryObj = {
+      category: this.props.categoryValue,
+      itemName: this.props.itemNameValue,
+      quantity: this.props.quantityValue,
+    };
+    this.props.submitInventory(inventoryObj);
+  }
   //   axios
   //     .post("http://localhost:5000/insertInventory", inventoryObj)
   //     .then((res) => console.log(res.data));
@@ -258,14 +261,14 @@ class InventoryForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.props.submitInventory}>
+      <form onSubmit={this.submitHandler}>
         {/* change to dropdown */}
         <label>
           Category:
           {/* <input type="text" name="category" onChange={this.changeHandler} value={this.state.category}/> */}
           <select
             name="_id"
-            value={this.props.category}
+            value={this.props.categoryValue}
             onChange={this.changeHandler}
           >
             <option value="" disabled hidden>
@@ -285,7 +288,7 @@ class InventoryForm extends React.Component {
             type="text"
             name="itemName"
             onChange={this.changeHandler}
-            value={this.props.itemName}
+            value={this.props.itemNameValue}
           />
         </label>
         <label>
@@ -296,7 +299,7 @@ class InventoryForm extends React.Component {
             min="0"
             max="100"
             onChange={this.changeHandler}
-            value={this.props.quantity}
+            value={this.props.quantityValue}
           />
         </label>
         <input type="submit" value="Add" />
