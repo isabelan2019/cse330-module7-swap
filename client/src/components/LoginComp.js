@@ -1,12 +1,17 @@
 import React from "react";
+// import ReactDOM from "react-dom";
+// import "./index.css";
 import axios from "axios";
+import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
+// import employeesSchema from "../../../api/schemas/employeesSchema";
 // import loginForm from "./LoginFormComp";
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            show: true
+            show: false,
+            isLoggedIn: false
         };
         this.showLogin = this.showLogin.bind(this);
         this.submitLogin = this.submitLogin.bind(this);
@@ -19,7 +24,7 @@ class Login extends React.Component {
         this.setState({
             loginUsername:loginInfo.loginUsername,
             loginPassword:loginInfo.loginPassword
-        })
+        });
     }
     submitLogin(loginObj){
         // event.preventDefault();
@@ -31,12 +36,21 @@ class Login extends React.Component {
 
         console.log("sending"+JSON.stringify(loginObj));
         axios.post('http://localhost:5000/login', loginObj)
-        .then(res => console.log(res.data));
+        .then(res => {
+            console.log(res.data);
+            if (!res.data){
+                alert("could not be logged in: "+res.data);
+                
+            } else {
+                this.setState({
+                    isLoggedIn: true
+                });
+            }
+        });
         
-        // this.setState({
-        //     username:"",
-        //     password:""
-        // });
+        this.setState({
+            show: false
+        });
     }
     showLogin(){
         this.setState({
@@ -54,10 +68,20 @@ class Login extends React.Component {
             onLoginChange={this.changeHandler}
             />
         }
+        const isLoggedIn = this.state.isLoggedIn;
+        let employeeNav;
+        // let buttonText;
+        if (isLoggedIn){
+            // buttonText = "Login";
+            employeeNav = <EmployeeNav />
+        } else {
+            // buttonText="log out";
+        }
         return (
             <div id="login">
                 <button onClick={this.showLogin}> Login</button>
                 {form}
+                {employeeNav}
             </div>
         );
     }
@@ -70,9 +94,7 @@ class LoginForm extends React.Component{
         this.state ={
             loginUsername: "",
             loginPassword: ""
-
         }
-
         this.submitHandler = this.submitHandler.bind(this);
         this.changeHandler = this.changeHandler.bind(this);
     }
@@ -92,22 +114,50 @@ class LoginForm extends React.Component{
         console.log(loginObj);
 
         this.props.checkLogin(loginObj);
+        this.setState({
+            loginUsername:"",
+            loginPassword:""
+        });
+       
     }
     render(){
         return(
             <form onSubmit={this.submitHandler}>
                 <label> Username: 
-                    <input type="text" name="loginUsername" onChange={this.changeHandler} value={this.props.loginUsername}/>
+                    <input type="text" name="loginUsername" onChange={this.changeHandler} value={this.state.loginUsername}/>
                 </label>
                 <label> Password: 
-                    <input type="password" name="loginPassword" onChange={this.changeHandler} value={this.props.loginPassword}/>
+                    <input type="password" name="loginPassword" onChange={this.changeHandler} value={this.state.loginPassword}/>
                 </label>
                 <input type="submit" value="Log In"/>
             </form>
-    
         );  
     }
 
     
 }
+class EmployeeNav extends React.Component {
+    // constructor(props){
+    //   super(props);
+    // }
+    render(){
+      return (
+        <div>
+          <Router>
+          <nav>
+            <button><Link to="/logout">Logout</Link></button>
+            <button> <Link to="/verification">Change Verification </Link></button>
+          </nav>
+          <Switch>
+            <Route path="/logout"/>
+            <Route path="/verification"/>
+          </Switch>
+          </Router>
+        </div>
+  
+      );
+  
+    }
+    
+  }
 export default Login;

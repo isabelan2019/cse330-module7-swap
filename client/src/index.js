@@ -53,6 +53,7 @@ class NavBar extends React.Component {
           <button> <Link to="/checkout">Checkout</Link></button>
           <button> <Link to="/transactions">Transactions</Link> </button>
           <button> <Link to="/inventory">Inventory Log</Link></button>
+
         </nav>
         <Switch>
           <Route path="/checkout" component={CustomerCheckout}/>
