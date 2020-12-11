@@ -16,6 +16,7 @@ const cookieParser = require("cookie-parser");
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const cryptoRandom = crypto.randomBytes(64).toString('hex');
+const withAuth = require('./token');
 
 // const MongoClient = require('mongodb').MongoClient;
 // const assert = require('assert');
@@ -182,7 +183,7 @@ app.post("/insertInventory", (req, res) => {
       if (err) {
         console.log(err);
         console.log("can't work");
-        return handleError(err);
+        // return handleError(err);
       } else {
         // console.log(data);
         res.json(data);
@@ -225,8 +226,8 @@ app.post("/login", (req, res) => {
             // res.send(isLoggedIn);
             const payload = user.username;
             const token = jwt.sign(payload, cryptoRandom);
-            res.cookie('token', token, {httpOnly:true})
-            .send(isLoggedIn);
+            res.cookie('token', token, {httpOnly:true}, {expires: new Date(Date.now()+3600000)})
+            .send(token);
             console.log(token);
           }
         }
@@ -235,9 +236,17 @@ app.post("/login", (req, res) => {
   });
 });
 
-app.post("/loggedIn", function (req, res) {
-  res.send("you are logged in");
+app.post("/logout", function (req, res) {
+  console.log("you are logging out");
+  res.send("logging out");
+
 });
+
+app.post("/changeVerification",withAuth, function (req, res) {
+  console.log("changing verification");
+});
+
+
 
 //set up code for mongoDB from  https://github.com/mongodb/node-mongodb-native
 // Connection URL
