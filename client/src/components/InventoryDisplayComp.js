@@ -71,9 +71,7 @@ class InventoryPage extends React.Component {
 
   handleInventoryChange(newInventory) {
     this.setState({
-      category: newInventory._id,
-      itemName: newInventory.itemName,
-      quantity: newInventory.quantity,
+      [newInventory.name]: newInventory.value,
     });
   }
 
@@ -86,7 +84,10 @@ class InventoryPage extends React.Component {
 
     axios
       .post("http://localhost:5000/insertInventory", inventoryObj)
-      .then((res) => console.log(res.data));
+      .then((res) => {
+        console.log(res.data);
+        this.getData();
+      });
 
     this.setState({
       category: "",
@@ -106,7 +107,10 @@ class InventoryPage extends React.Component {
 
     axios
       .post("http://localhost:5000/deleteInventoryItem", deletedObject)
-      .then((res) => console.log(res.data));
+      .then((res) => {
+        console.log(res.data);
+        this.getData();
+      });
   }
 
   editQuantity(ids) {
@@ -117,11 +121,15 @@ class InventoryPage extends React.Component {
     const editObject = {
       categoryID: ids.categoryID,
       itemID: ids.itemID,
+      quantity: ids.quantity,
     };
 
     axios
       .post("http://localhost:5000/editInventoryQuantity", editObject)
-      .then((res) => console.log(res.data));
+      .then((res) => {
+        console.log(res.data);
+        this.getData();
+      });
   }
   render() {
     return (
@@ -137,12 +145,12 @@ class InventoryPage extends React.Component {
           newCategoryValue={this.state.newCategory}
         />
         <InventoryForm
-          onInventoryChange={this.handleInventoryChange}
-          submitInventory={this.submitInventoryForm}
+          handleInventoryChange={this.handleInventoryChange}
+          submitInventoryForm={this.submitInventoryForm}
           displayCategory={this.state.inventoryData}
           categoryValue={this.state.category}
-          itemName={this.state.itemName}
-          quantity={this.state.quantity}
+          itemNameValue={this.state.itemName}
+          quantityValue={this.state.quantity}
         />
       </div>
     );
@@ -214,8 +222,13 @@ class InventoryForm extends React.Component {
 
   changeHandler(event) {
     event.preventDefault();
+    const nameAttr = event.target.name;
+    const valueAttr = event.target.value;
     // this.setState({ [event.target.name]: event.target.value });
-    this.props.onInventoryChange(event.target.value);
+    this.props.handleInventoryChange({
+      name: nameAttr,
+      value: valueAttr,
+    });
   }
 
   submitHandler(event) {
@@ -225,7 +238,7 @@ class InventoryForm extends React.Component {
       itemName: this.props.itemNameValue,
       quantity: this.props.quantityValue,
     };
-    this.props.submitInventory(inventoryObj);
+    this.props.submitInventoryForm(inventoryObj);
   }
   //   axios
   //     .post("http://localhost:5000/insertInventory", inventoryObj)
@@ -267,7 +280,7 @@ class InventoryForm extends React.Component {
           Category:
           {/* <input type="text" name="category" onChange={this.changeHandler} value={this.state.category}/> */}
           <select
-            name="_id"
+            name="category"
             value={this.props.categoryValue}
             onChange={this.changeHandler}
           >
@@ -276,8 +289,7 @@ class InventoryForm extends React.Component {
             </option>
             {this.props.displayCategory.map((category) => (
               <option key={category._id} value={category._id}>
-                {" "}
-                {category.category}{" "}
+                {category.category}
               </option>
             ))}
           </select>
@@ -311,6 +323,9 @@ class InventoryForm extends React.Component {
 class InventoryDisplay extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      newQuantity: "",
+    };
     // this.state = {
     //   inventoryData: [],
     // };
@@ -319,6 +334,12 @@ class InventoryDisplay extends React.Component {
     // this.editQuantity = this.editQuantity.bind(this);
     this.deleteInventory = this.deleteInventory.bind(this);
     this.editInventory = this.editInventory.bind(this);
+    this.changeHandler = this.changeHandler.bind(this);
+  }
+
+  changeHandler(event) {
+    event.preventDefault();
+    this.setState({ newQuantity: event.target.value });
   }
 
   // componentDidMount() {
@@ -384,6 +405,7 @@ class InventoryDisplay extends React.Component {
       itemID: event.target.parentNode.parentNode.id,
       categoryID:
         event.target.parentNode.parentNode.parentNode.parentNode.parentNode.id,
+      quantity: this.state.newQuantity,
     };
     this.props.editQuantity(ids);
   }
@@ -407,7 +429,15 @@ class InventoryDisplay extends React.Component {
                   {data.itemTypes.map((item) => (
                     <tr id={item._id} key={item._id}>
                       <td> {item.itemName} </td>
-                      <td> {item.quantity} </td>
+                      <td>
+                        {item.quantity}
+                        <input
+                          type="number"
+                          name="newQuantity"
+                          value={this.state.newQuantity}
+                          onChange={this.changeHandler}
+                        />
+                      </td>
                       <td>
                         <input
                           type="button"

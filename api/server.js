@@ -143,11 +143,12 @@ app.post("/editInventoryQuantity", (req, res) => {
   console.log(req.body);
   const itemID = req.body.itemID;
   const categoryID = req.body.categoryID;
+  const newQuantity = req.body.quantity;
   //findOneAndUpdate subdocument: https://stackoverflow.com/questions/21522112/how-to-update-subdocument-with-findoneandupdate
   InventoryItem.findOneAndUpdate(
     { _id: categoryID, "itemTypes._id": itemID },
     {
-      "itemTypes.$.quantity": 5,
+      "itemTypes.$.quantity": newQuantity,
     },
     function (err, data) {
       if (err) {
