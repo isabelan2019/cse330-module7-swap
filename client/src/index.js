@@ -7,7 +7,7 @@ import CreateEmployee from "./components/CreateEmployee Comp";
 import Login from "./components/LoginComp";
 import CustomerCheckout from "./components/CheckoutComp";
 import TransactionsLog from "./components/TransactionsLogComp";
-import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
+import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 // import InventoryDisplayTest from "./components/test";
 
 // import InventoryForm from './components/InventoryFormComp';
@@ -44,29 +44,36 @@ class NavBar extends React.Component {
   // constructor(props){
   //   super(props);
   // }
-  render(){
+  render() {
     return (
       <div>
         <Router>
-        <nav>
-          <button><Link to="/">Home</Link></button>
-          <button> <Link to="/checkout">Checkout</Link></button>
-          <button> <Link to="/transactions">Transactions</Link> </button>
-          <button> <Link to="/inventory">Inventory Log</Link></button>
-
-        </nav>
-        <Switch>
-          <Route path="/checkout" component={CustomerCheckout}/>
-          <Route path="/transactions" component={TransactionsLog}/>
-          <Route path="/inventory" component={InventoryDisplay}/>
-        </Switch>
+          <nav>
+            <button>
+              <Link to="/">Home</Link>
+            </button>
+            <button>
+              {" "}
+              <Link to="/checkout">Checkout</Link>
+            </button>
+            <button>
+              {" "}
+              <Link to="/transactions">Transactions</Link>{" "}
+            </button>
+            <button>
+              {" "}
+              <Link to="/inventory">Inventory Log</Link>
+            </button>
+          </nav>
+          <Switch>
+            <Route path="/checkout" component={CustomerCheckout} />
+            <Route path="/transactions" component={TransactionsLog} />
+            <Route path="/inventory" component={InventoryDisplay} />
+          </Switch>
         </Router>
       </div>
-
     );
-
   }
-  
 }
 
 // class CreateEmployee extends React.Component{
@@ -332,6 +339,5 @@ class NavBar extends React.Component {
 //         val: state.val - 1
 //       }));
 //     }
-
 
 ReactDOM.render(<App />, document.getElementById("root"));

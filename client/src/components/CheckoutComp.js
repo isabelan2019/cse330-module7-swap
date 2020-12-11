@@ -44,7 +44,7 @@ class CustomerCheckout extends React.Component {
     };
 
     this.setState({
-      items: { ...this.state.items, item },
+      items: Object.assign(this.state.items, item),
     });
     console.log(item);
   }
@@ -117,23 +117,26 @@ class ItemLine extends React.Component {
     // this.increaseButton = this.increaseButton.bind(this);
     // this.decreaseButton = this.decreaseButton.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
+    this.sendUp = this.sendUp.bind(this);
   }
 
   changeHandler(event) {
     event.preventDefault();
     this.setState({ itemNumber: event.target.value });
-    if (event.target.value != this.state.itemNumber) {
-      return;
-    } else {
-      this.sendUp();
-    }
+    this.sendUp(event.target.value);
+    // if (event.target.value != this.state.itemNumber) {
+    //   return;
+    // } else {
+    //   this.sendUp();
+    // }
   }
 
-  sendUp() {
+  sendUp(value) {
     const newItem = {
       id: this.state.itemID,
-      quantity: this.state.itemNumber,
+      quantity: value,
     };
+    console.log(newItem.quantity);
     this.props.handleQuantityChange(newItem);
   }
   // increaseButton(event) {
@@ -175,7 +178,7 @@ class ItemLine extends React.Component {
           type="number"
           value={this.state.itemNumber}
           name="itemQuantity"
-          onChange={this.changeHandler}
+          onChange={this.sendUp}
         />
       </span>
     );
