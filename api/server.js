@@ -6,17 +6,17 @@ const express = require("express"),
   cors = require("cors");
 const router = express.Router();
 const { NotExtended } = require("http-errors");
-const { ObjectID } = require("mongodb");
+const { ObjectID, ObjectId } = require("mongodb");
 //mongoose connection
 
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const cookieParser = require("cookie-parser");
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const cryptoRandom = crypto.randomBytes(64).toString('hex');
-const withAuth = require('./token');
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const cryptoRandom = crypto.randomBytes(64).toString("hex");
+const withAuth = require("./token");
 
 // const MongoClient = require('mongodb').MongoClient;
 // const assert = require('assert');
@@ -93,6 +93,31 @@ app.post("/addInventoryCategory", (req, res) => {
       console.log(data);
       console.log(err);
     } else {
+      res.json(data);
+    }
+  });
+});
+
+app.post("/customerCheckout", (req, res) => {
+  let newTransaction = new Transaction();
+  newTransaction._id = new ObjectId();
+  newTransaction.date = req.body.date;
+  newTransaction.firstName = req.body.firstName;
+  newTransaction.lastName = req.body.lastName;
+  const items = [];
+  for (let key in req.body.items) {
+    const eachItem = {
+      _id: ObjectId(key),
+      quantity: req.body.items[key],
+    };
+    items.push(eachItem);
+  }
+  newTransaction.items = items;
+  newTransaction.save(function (err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(data);
       res.json(data);
     }
   });
@@ -194,8 +219,8 @@ app.post("/insertInventory", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  console.log("body"+JSON.stringify(req.body));
-    
+  console.log("body" + JSON.stringify(req.body));
+
   const loginUsername = req.body.loginUsername;
   const loginPassword = req.body.loginPassword;
   Employee.findOne({ username: loginUsername }, function (err, user) {
@@ -207,27 +232,32 @@ app.post("/login", (req, res) => {
     } else {
       //user exists
       //hash password
-      console.log("user exists "+user.password);
-      bcrypt.compare(loginPassword, user.password, function(err, same){
+      console.log("user exists " + user.password);
+      bcrypt.compare(loginPassword, user.password, function (err, same) {
         if (err) {
           // callback(err);
-          res.send("error comparing passwords")
+          res.send("error comparing passwords");
         } else {
           // callback(err, same);
           console.log(user.password);
           console.log(loginPassword);
 
-          if (!same){
-            const isLoggedIn= false;
+          if (!same) {
+            const isLoggedIn = false;
             res.send(isLoggedIn);
-
           } else {
-            const isLoggedIn= true;
+            const isLoggedIn = true;
             // res.send(isLoggedIn);
             const payload = user.username;
             const token = jwt.sign(payload, cryptoRandom);
-            res.cookie('token', token, {httpOnly:true}, {expires: new Date(Date.now()+3600000)})
-            .send(token);
+            res
+              .cookie(
+                "token",
+                token,
+                { httpOnly: true },
+                { expires: new Date(Date.now() + 3600000) }
+              )
+              .send(token);
             console.log(token);
           }
         }
@@ -239,14 +269,11 @@ app.post("/login", (req, res) => {
 app.post("/logout", function (req, res) {
   console.log("you are logging out");
   res.send("logging out");
-
 });
 
-app.post("/changeVerification",withAuth, function (req, res) {
+app.post("/changeVerification", withAuth, function (req, res) {
   console.log("changing verification");
 });
-
-
 
 //set up code for mongoDB from  https://github.com/mongodb/node-mongodb-native
 // Connection URL

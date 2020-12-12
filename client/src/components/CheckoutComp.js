@@ -14,9 +14,13 @@ class CustomerCheckout extends React.Component {
     };
     this.getData = this.getData.bind(this);
     this.handleQuantityChange = this.handleQuantityChange.bind(this);
+    this.submitCheckout = this.submitCheckout.bind(this);
+    this.changeHandler = this.changeHandler.bind(this);
     // this.changeHandler = this.changeHandler.bind(this);
   }
-
+  changeHandler(event) {
+    this.setState({ [event.target.name]: event.target.value });
+  }
   componentDidMount() {
     this.getData();
   }
@@ -40,30 +44,42 @@ class CustomerCheckout extends React.Component {
 
   handleQuantityChange(newItem) {
     let item = {
-      [newItem.id]: newItem.quantity,
+      [newItem.itemID]: newItem.quantity,
     };
 
     this.setState({
       items: Object.assign(this.state.items, item),
     });
-    console.log(item);
+  }
+
+  submitCheckout() {
+    const customerCheckoutObj = {
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      email: this.state.email,
+      data: this.state.data,
+      items: this.state.items,
+    };
+    axios.post("/customerCheckout", customerCheckoutObj).then((res) => {
+      console.log(res.data);
+    });
   }
 
   render() {
     return (
       <div>
-        <form>
+        <form onSubmit={this.submitCheckout}>
           <label>
             First Name:
-            <input type="text" name="firstName" />
+            <input onChange={this.changeHandler} type="text" name="firstName" />
           </label>
           <label>
             Last Name:
-            <input type="text" name="firstName" />
+            <input onChange={this.changeHandler} type="text" name="firstName" />
           </label>
           <label>
             Email:
-            <input type="text" name="firstName" />
+            <input onChange={this.changeHandler} type="text" name="firstName" />
           </label>
           <ul>
             {this.state.inventoryData.map((data) => (
@@ -80,6 +96,7 @@ class CustomerCheckout extends React.Component {
                         <td>
                           {item.itemName}
                           <ItemLine
+                            categoryID={data.category}
                             itemID={item._id}
                             itemName={item.itemName}
                             handleQuantityChange={this.handleQuantityChange}
@@ -133,7 +150,8 @@ class ItemLine extends React.Component {
 
   sendUp(value) {
     const newItem = {
-      id: this.state.itemID,
+      category_id: this.props.categoryID,
+      itemID: this.state.itemID,
       quantity: value,
     };
     console.log(newItem.quantity);
@@ -178,7 +196,7 @@ class ItemLine extends React.Component {
           type="number"
           value={this.state.itemNumber}
           name="itemQuantity"
-          onChange={this.sendUp}
+          onChange={this.changeHandler}
         />
       </span>
     );
