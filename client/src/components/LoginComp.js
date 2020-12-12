@@ -2,6 +2,7 @@ import React from "react";
 // import ReactDOM from "react-dom";
 // import "./index.css";
 import axios from "axios";
+
 // import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
 // import employeesSchema from "../../../api/schemas/employeesSchema";
 // import loginForm from "./LoginFormComp";
@@ -17,8 +18,8 @@ class Login extends React.Component {
         this.logout = this.logout.bind(this);
         this.submitLogin = this.submitLogin.bind(this);
         this.changeHandler = this.changeHandler.bind(this);
-        
     }
+
     changeHandler(loginInfo){
         // event.preventDefault();
         // console.log(loginInfo);
@@ -34,6 +35,7 @@ class Login extends React.Component {
         //     username: this.state.username,
         //     password: this.state.password
         // }
+        // const [auth, setAuth] = useState(null);
 
         console.log("sending"+JSON.stringify(loginObj));
         axios.post('http://localhost:5000/login', loginObj)
@@ -43,8 +45,14 @@ class Login extends React.Component {
                 alert("could not be logged in: "+res.data);
                 
             } else {
+                if (res.status===200){
+                    console.log(JSON.stringify(res));
+                    // this.props.history.push("/");
+                    // setAuth(data);
+
+                }
                 this.setState({
-                    isLoggedIn: true
+                    isLoggedIn: true,
                 });
             }
         });
@@ -232,7 +240,7 @@ class VerificationForm extends React.Component{
         }
         console.log(verificationObj);
 
-        // this.props.changeVerificatiion(verificationObj);
+        this.props.changeVerificatiion(verificationObj);
         this.setState({
             oldVerification:"",
             newVerification:""

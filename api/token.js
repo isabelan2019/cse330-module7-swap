@@ -5,6 +5,7 @@ const cryptoRandom = crypto.randomBytes(64).toString('hex');
 const withAuth = function(req, res, next) {
     const token = req.cookies.token;
     if (!token) {
+        // res.send(req.data); 
         res.status(401).send('Unauthorized: no token provided');
     } else {
         jwt.verify(token, cryptoRandom, function(err, decoded) {

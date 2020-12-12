@@ -13,6 +13,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const cookieParser = require("cookie-parser");
+const session = require("cookie-session");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const cryptoRandom = crypto.randomBytes(64).toString("hex");
@@ -46,10 +47,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.listen(port, () => console.log("Backend server live on " + port));
 app.use(cookieParser());
+app.use(
+  session({
+    name: 'session',
+    secret: cryptoRandom,
+    expires: new Date(Date.now() + 60*60*1000), //1 hr
+  })
+);
 //check if server is connected
 app.get("/", (req, res) => {
   res.send({ message: "Server connected" });
 });
+
 
 // //send POST request to mongoDB database: https://www.geeksforgeeks.org/nodejs-crud-operations-using-mongoose-and-mongodb-atlas/
 app.post("/createEmployees", (req, res) => {
@@ -257,8 +266,8 @@ app.post("/login", (req, res) => {
                 { httpOnly: true },
                 { expires: new Date(Date.now() + 3600000) }
               )
-              .send(token);
-            console.log(token);
+              .sendStatus(200);
+            console.log(res.cookie);
           }
         }
       });
@@ -268,11 +277,16 @@ app.post("/login", (req, res) => {
 
 app.post("/logout", function (req, res) {
   console.log("you are logging out");
-  res.send("logging out");
+  // res.send("logging out");
+  // console.log(res.cookie.token);
+  res.clearCookie("token").sendStatus(200);
 });
 
-app.post("/changeVerification", withAuth, function (req, res) {
+app.post("/changeVerification", function (req, res) {
   console.log("changing verification");
+
+  withAuth(req, res);
+  // console.log("verificaiton token");
 });
 
 //set up code for mongoDB from  https://github.com/mongodb/node-mongodb-native
