@@ -55,7 +55,7 @@ class TransactionsLog extends React.Component {
             </tr>
             {this.state.transactionsData.map((data) => (
               <tr key={data._id}>
-                <td>{data.Date}</td>
+                <td>{data.date}</td>
                 <td> {data.customer[0]} </td>
                 <td> {data.customer[1]}</td>
                 <td> {data.customer[2]} </td>

@@ -44,7 +44,11 @@ class CustomerCheckout extends React.Component {
 
   handleQuantityChange(newItem) {
     let item = {
-      [newItem.itemID]: newItem.quantity,
+      [newItem.itemID]: {
+        quantity: newItem.quantity,
+        itemName: newItem.itemName,
+        categoryID: newItem.categoryID,
+      },
     };
 
     this.setState({
@@ -57,12 +61,18 @@ class CustomerCheckout extends React.Component {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
       email: this.state.email,
-      data: this.state.data,
+      date: this.state.date,
       items: this.state.items,
     };
     axios.post("/customerCheckout", customerCheckoutObj).then((res) => {
       console.log(res.data);
     });
+
+    axios
+      .post("/customerCheckoutChangeInventory", customerCheckoutObj)
+      .then((res) => {
+        console.log(res.data);
+      });
   }
 
   render() {
@@ -75,11 +85,11 @@ class CustomerCheckout extends React.Component {
           </label>
           <label>
             Last Name:
-            <input onChange={this.changeHandler} type="text" name="firstName" />
+            <input onChange={this.changeHandler} type="text" name="lastName" />
           </label>
           <label>
             Email:
-            <input onChange={this.changeHandler} type="text" name="firstName" />
+            <input onChange={this.changeHandler} type="text" name="email" />
           </label>
           <ul>
             {this.state.inventoryData.map((data) => (
@@ -96,10 +106,11 @@ class CustomerCheckout extends React.Component {
                         <td>
                           {item.itemName}
                           <ItemLine
-                            categoryID={data.category}
+                            categoryID={data._id}
                             itemID={item._id}
                             itemName={item.itemName}
                             handleQuantityChange={this.handleQuantityChange}
+                            maxQuantity={item.quantity}
                           />
                           {/* <input
                             type="hidden"
@@ -150,9 +161,10 @@ class ItemLine extends React.Component {
 
   sendUp(value) {
     const newItem = {
-      category_id: this.props.categoryID,
+      categoryID: this.props.categoryID,
       itemID: this.state.itemID,
       quantity: value,
+      itemName: this.props.itemName,
     };
     console.log(newItem.quantity);
     this.props.handleQuantityChange(newItem);
@@ -194,6 +206,8 @@ class ItemLine extends React.Component {
         {/* <button onClick={this.increaseButton}>+</button> */}
         <input
           type="number"
+          min="0"
+          max={this.props.maxQuantity}
           value={this.state.itemNumber}
           name="itemQuantity"
           onChange={this.changeHandler}

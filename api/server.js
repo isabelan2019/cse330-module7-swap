@@ -25,7 +25,6 @@ const withAuth = require("./token");
 const Employee = require("./schemas/employeesSchema");
 const InventoryItem = require("./schemas/inventorySchema");
 const Transaction = require("./schemas/transactionsSchema");
-const employeesSchema = require("./schemas/employeesSchema");
 // mongoose.connect("mongodb://localhost/grocerydb", { useNewUrlParser: true, useUnifiedTopology: true })
 //   .catch(error => handleError(error));
 
@@ -49,16 +48,15 @@ app.listen(port, () => console.log("Backend server live on " + port));
 app.use(cookieParser());
 app.use(
   session({
-    name: 'session',
+    name: "session",
     secret: cryptoRandom,
-    expires: new Date(Date.now() + 60*60*1000), //1 hr
+    expires: new Date(Date.now() + 60 * 60 * 1000), //1 hr
   })
 );
 //check if server is connected
 app.get("/", (req, res) => {
   res.send({ message: "Server connected" });
 });
-
 
 // //send POST request to mongoDB database: https://www.geeksforgeeks.org/nodejs-crud-operations-using-mongoose-and-mongodb-atlas/
 app.post("/createEmployees", (req, res) => {
@@ -99,7 +97,6 @@ app.post("/addInventoryCategory", (req, res) => {
   newInventoryCategory.itemTypes = [];
   newInventoryCategory.save(function (err, data) {
     if (err) {
-      console.log(data);
       console.log(err);
     } else {
       res.json(data);
@@ -108,37 +105,125 @@ app.post("/addInventoryCategory", (req, res) => {
 });
 
 app.post("/customerCheckout", (req, res) => {
+  console.log(req.body);
+  //saves to transaction log
   let newTransaction = new Transaction();
   newTransaction._id = new ObjectId();
   newTransaction.date = req.body.date;
-  newTransaction.firstName = req.body.firstName;
-  newTransaction.lastName = req.body.lastName;
+  newTransaction.customer = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+  };
   const items = [];
   for (let key in req.body.items) {
     const eachItem = {
       _id: ObjectId(key),
-      quantity: req.body.items[key],
+      itemName: req.body.items[key].itemName,
+      quantity: req.body.items[key].quantity,
     };
     items.push(eachItem);
   }
+  console.log("line 126");
+  console.log(items);
   newTransaction.items = items;
+
   newTransaction.save(function (err, data) {
     if (err) {
       console.log(err);
     } else {
-      console.log(data);
       res.json(data);
     }
   });
+
+  // for (let key in req.body.items) {
+  //   let oldQuantity = new Number();
+  //   let newQuantity = new Number();
+  //   InventoryItem.findOne(
+  //     { "itemTypes._id": key },
+  //     "itemTypes.$",
+  //     function (err, data) {
+  //       if (err) {
+  //         console.log(err);
+  //       } else {
+  //         console.log("check structure");
+  //         oldQuantity = data.itemTypes[0].quantity;
+  //         newQuantity = oldQuantity - Number(req.body.items[key].quantity);
+  //         changeQuantityFromCheckout(
+  //           newQuantity,
+  //           req.body.items[key].categoryID,
+  //           key,
+  //           res
+  //         );
+  //         // console.log(data.itemTypes[0].quantity);
+  //       }
+  //     }
+  //   );
+  // }
+  // InventoryItem.findOneAndUpdate(
+  //   { _id: req.body.items.categoryID, "itemTypes._id": key },
+  //   {
+  //     "itemTypes.$.quantity": newQuantity,
+  //   },
+  //   function (err, data) {
+  //     if (err) {
+  //       console.log(err);
+  //     } else {
+  //       res.json(data);
+  //     }
+  //   }
+  // );
+});
+
+function changeQuantityFromCheckout(newQuantity, categoryID, itemID) {
+  InventoryItem.findOneAndUpdate(
+    { _id: categoryID, "itemTypes._id": itemID },
+    {
+      "itemTypes.$.quantity": newQuantity,
+    },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        // res.json(data);
+        return data;
+      }
+    }
+  );
+}
+
+app.post("/customerCheckoutChangeInventory", (req, res) => {
+  for (let key in req.body.items) {
+    let oldQuantity = new Number();
+    let newQuantity = new Number();
+    InventoryItem.findOne(
+      { "itemTypes._id": key },
+      "itemTypes.$",
+      function (err, data) {
+        if (err) {
+          console.log(err);
+        } else {
+          oldQuantity = data.itemTypes[0].quantity;
+          newQuantity = oldQuantity - Number(req.body.items[key].quantity);
+          res.json(
+            changeQuantityFromCheckout(
+              newQuantity,
+              req.body.items[key].categoryID,
+              key
+            )
+          );
+          // console.log(data.itemTypes[0].quantity);
+        }
+      }
+    );
+  }
 });
 
 app.get("/getAllInventory", (req, res) => {
   InventoryItem.find({}, function (err, data) {
     if (err) {
       console.log(err);
-      console.log("can't work");
     } else {
-      console.log(data);
       res.json(data);
       // res.send("test success");
     }
@@ -149,9 +234,7 @@ app.get("/getTransactions", (req, res) => {
   Transaction.find({}, function (err, data) {
     if (err) {
       console.log(err);
-      console.log("can't work");
     } else {
-      console.log(data);
       res.json(data);
       // res.send("test success");
     }
@@ -169,7 +252,6 @@ app.post("/deleteInventoryItem", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(data);
         res.json(data);
       }
     }
@@ -191,7 +273,6 @@ app.post("/editInventoryQuantity", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(data);
         res.json(data);
       }
     }
@@ -216,7 +297,6 @@ app.post("/insertInventory", (req, res) => {
     function (err, data) {
       if (err) {
         console.log(err);
-        console.log("can't work");
         // return handleError(err);
       } else {
         // console.log(data);
