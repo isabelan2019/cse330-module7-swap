@@ -19,9 +19,9 @@ class NavBar extends React.Component {
         <div>
           <Router>
             <nav>
-              <button>
+              {/* <button>
                 <Link to="/">Home</Link>
-              </button>
+              </button> */}
               <button>
                 {" "}
                 <Link to="/checkout">Checkout</Link>

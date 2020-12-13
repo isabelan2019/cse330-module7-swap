@@ -39,8 +39,15 @@ class TransactionsLog extends React.Component {
 
   render() {
     console.log(this.state.transactionsData);
+    const isLoggedIn = sessionStorage.getItem("username");
+    // let notLoggedIn ;
+    // let inventory;
+    
     if (!this.state.transactionsData) {
       return null;
+    } else if (!isLoggedIn){
+      //no username set
+      return <p>You are not logged in.</p>;
     }
     return (
       <div>

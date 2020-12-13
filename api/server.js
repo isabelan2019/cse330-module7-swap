@@ -390,6 +390,7 @@ app.post("/logout", function (req, res) {
   console.log("you are logging out");
   // res.send("logging out");
   // console.log(res.cookie.token);
+  req.session=null;
   res.clearCookie("token").sendStatus(200);
 });
 
