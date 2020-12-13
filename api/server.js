@@ -355,17 +355,12 @@ app.post("/login", (req, res) => {
           } else {
             const isLoggedIn = true;
             // res.send(isLoggedIn);
-            const payload = user.username;
-            const token = jwt.sign(payload, cryptoRandom);
-            res
-              .cookie(
-                "token",
-                token,
-                { httpOnly: true },
-                { expires: new Date(Date.now() + 3600000) }
-              )
-              .sendStatus(200);
-            console.log(res.cookie);
+            res.loggedIn = true;
+            res.username = user.username;
+            req.session.username = user.username;
+            console.log("cookie",res.username);
+            res.send({isLoggedIn: isLoggedIn, username: user.username});
+            
           }
         }
       });

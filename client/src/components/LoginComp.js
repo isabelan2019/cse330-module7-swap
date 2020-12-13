@@ -12,7 +12,7 @@ class Login extends React.Component {
         super(props);
         this.state = {
             show: false,
-            isLoggedIn: true
+            isLoggedIn: false
         };
         this.showLogin = this.showLogin.bind(this);
         this.logout = this.logout.bind(this);
@@ -40,17 +40,11 @@ class Login extends React.Component {
         console.log("sending"+JSON.stringify(loginObj));
         axios.post('http://localhost:5000/login', loginObj)
         .then(res => {
-            console.log(res.data);
+            console.log(JSON.stringify(res.data));
             if (!res.data){
                 alert("could not be logged in: "+res.data);
-                
             } else {
-                if (res.status===200){
-                    console.log(JSON.stringify(res));
-                    // this.props.history.push("/");
-                    // setAuth(data);
-
-                }
+                sessionStorage.setItem("username",res.data.username);
                 this.setState({
                     isLoggedIn: true,
                 });
@@ -83,10 +77,10 @@ class Login extends React.Component {
             onLoginChange={this.changeHandler}
             />
         }
-        const isLoggedIn = this.state.isLoggedIn;
+        const loggedIn = sessionStorage.getItem("username");
         let employeeNav;
         // let buttonText;
-        if (isLoggedIn){
+        if (loggedIn){
             // buttonText = "Login";
             employeeNav = <EmployeeNav 
             loggedOut={this.logout}/>
@@ -176,6 +170,7 @@ class EmployeeNav extends React.Component {
         .then(res => {
             console.log(res.data);
             this.props.loggedOut();
+            sessionStorage.clear();
         });
         // this.setState({showLogout:true});
 
@@ -184,10 +179,15 @@ class EmployeeNav extends React.Component {
         this.setState({showVerification:!this.state.showVerification});
     }
     changeVerification(obj){
-        axios.post('http://localhost:5000/changeVerification', obj)
-        .then(res => {
-            console.log(res.data);
-        });
+        if (sessionStorage.getItem("username")){
+            axios.post('http://localhost:5000/changeVerification', {withCredentials: true},obj)
+            .then(res => {
+                console.log(res.data);
+            }); 
+        } else {
+            alert("you are not signed in");
+        }
+        
 
     }
     render(){
@@ -202,6 +202,7 @@ class EmployeeNav extends React.Component {
         return (
           
         <div>
+            <p>Welcome {sessionStorage.getItem("username")}</p>
           <nav>
             <button onClick={this.logout}>Logout</button>
             <button onClick={this.showVerification}>Change Verification </button>
