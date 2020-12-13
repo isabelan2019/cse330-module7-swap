@@ -2,6 +2,9 @@ import React from "react";
 // import ReactDOM from "react-dom";
 // import "./index.css";
 import axios from "axios";
+import NavBar from "./NavBarComp";
+import CreateEmployee from "./CreateEmployee Comp";
+import CustomerCheckout from "./CheckoutComp";
 
 // import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
 // import employeesSchema from "../../../api/schemas/employeesSchema";
@@ -63,13 +66,23 @@ class Login extends React.Component {
         // show = !show;
     }
     logout(){
-        this.setState({
-            isLoggedIn: false
+        axios.post('http://localhost:5000/logout')
+        .then(res => {
+            console.log(res.data);
+            sessionStorage.clear();
+            this.setState({
+                isLoggedIn: false
+            });
+            sessionStorage.removeItem("username");
+            sessionStorage.clear();
         });
+        
+        // this.render();
 
     }
     render (){
         const show = this.state.show;
+        let loginButton;
         let form ;
         if (show){
             form = <LoginForm 
@@ -79,19 +92,34 @@ class Login extends React.Component {
         }
         const loggedIn = sessionStorage.getItem("username");
         let employeeNav;
+        let navBar;
+        let customerCheckout;
+        let register;
         // let buttonText;
         if (loggedIn){
             // buttonText = "Login";
             employeeNav = <EmployeeNav 
             loggedOut={this.logout}/>
+            navBar =<NavBar />
         } else {
             // buttonText="log out";
+            loginButton = <button onClick={this.showLogin}> Login</button>;
+            customerCheckout = <CustomerCheckout/>;
+            register = <CreateEmployee />
         }
         return (
-            <div id="login">
-                <button onClick={this.showLogin}> Login</button>
-                {form}
-                {employeeNav}
+            <div>
+                <div id="notLoggedIn">
+                    {loginButton}
+                    {form}
+                    {register}
+                    {customerCheckout}
+                </div>
+                <div id="loggedIn">
+                    {employeeNav}
+                    {navBar}
+                </div>
+
             </div>
         );
     }
@@ -166,12 +194,9 @@ class EmployeeNav extends React.Component {
         });
     }
     logout(){
-        axios.post('http://localhost:5000/logout')
-        .then(res => {
-            console.log(res.data);
-            this.props.loggedOut();
-            sessionStorage.clear();
-        });
+        
+        this.props.loggedOut();
+
         // this.setState({showLogout:true});
 
     }

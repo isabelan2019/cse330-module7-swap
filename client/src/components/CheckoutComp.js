@@ -101,7 +101,7 @@ class CustomerCheckout extends React.Component {
         let eachItemPrice = 0;
         let eachItemWeight = 0;
         for (let j in res.data) {
-          if (summaryItems[i].categoryID == res.data[j]._id) {
+          if (summaryItems[i].categoryID === res.data[j]._id) {
             eachItemPrice = res.data[j].priceEstimate;
             eachItemWeight = res.data[j].weightEstimate;
             console.log(eachItemPrice);
@@ -138,6 +138,7 @@ class CustomerCheckout extends React.Component {
   render() {
     return (
       <div>
+        <h1>SWAP Customer Checkout</h1>
         <form onSubmit={this.submitCheckout}>
           <label>
             First Name:
