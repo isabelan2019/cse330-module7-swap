@@ -11,11 +11,16 @@ class CustomerCheckout extends React.Component {
       date: new Date(),
       items: {},
       inventoryData: [],
+      viewSummary: false,
+      totalWeight: 0,
+      totalPrice: 0,
+      itemsForSummary: [],
     };
     this.getData = this.getData.bind(this);
     this.handleQuantityChange = this.handleQuantityChange.bind(this);
     this.submitCheckout = this.submitCheckout.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
+    this.getCalculations = this.getCalculations.bind(this);
     // this.changeHandler = this.changeHandler.bind(this);
   }
   changeHandler(event) {
@@ -23,6 +28,7 @@ class CustomerCheckout extends React.Component {
   }
   componentDidMount() {
     this.getData();
+    this.setState({ viewSummary: false });
   }
 
   getData() {
@@ -56,7 +62,8 @@ class CustomerCheckout extends React.Component {
     });
   }
 
-  submitCheckout() {
+  submitCheckout(event) {
+    event.preventDefault();
     const customerCheckoutObj = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
@@ -73,8 +80,61 @@ class CustomerCheckout extends React.Component {
       .then((res) => {
         console.log(res.data);
       });
+
+    this.setState({ viewSummary: true });
+    this.setState({ itemsForSummary: Object.values(this.state.items) });
+    this.getCalculations();
   }
 
+  getCalculations() {
+    const summaryInfo = {
+      items: this.state.items,
+    };
+    const summaryItems = Object.values(this.state.items);
+    console.log("line 94");
+    console.log(summaryItems);
+    axios.get("/getAllInventory").then((res) => {
+      console.log(res.data);
+      let totalPrice = 0;
+      let totalWeight = 0;
+      for (let i in summaryItems) {
+        let eachItemPrice = 0;
+        let eachItemWeight = 0;
+        for (let j in res.data) {
+          if (summaryItems[i].categoryID == res.data[j]._id) {
+            eachItemPrice = res.data[j].priceEstimate;
+            eachItemWeight = res.data[j].weightEstimate;
+            console.log(eachItemPrice);
+            console.log(eachItemWeight);
+          }
+        }
+        let eachTotalPrice = eachItemPrice * summaryItems[i].quantity;
+        let eachTotalWeight = eachItemWeight * summaryItems[i].quantity;
+        totalPrice = totalPrice + eachTotalPrice;
+        totalWeight = totalWeight + eachTotalWeight;
+      }
+
+      this.setState({
+        weight: totalWeight,
+        price: totalPrice,
+      });
+    });
+    // axios.post("/summaryCalculations", summaryInfo).then((res) => {
+    //   const data = res.data;
+    //   let totalPrice = 0;
+    //   let totalWeight = 0;
+    //   for (let i in data) {
+    //     let eachItemPrice = data[i].priceEstimate * summaryItems[i].quantity;
+    //     totalPrice = totalPrice + eachItemPrice;
+    //     let eachItemWeight = data[i].weightEstimate * summaryItems[i].quantity;
+    //     totalWeight = totalWeight + eachItemWeight;
+    //   }
+    //   this.setState({
+    //     weight: totalWeight,
+    //     price: totalPrice,
+    //   });
+    // });
+  }
   render() {
     return (
       <div>
@@ -130,6 +190,15 @@ class CustomerCheckout extends React.Component {
           </ul>
           <input type="submit" value="Checkout" />
         </form>
+        {this.state.viewSummary && (
+          <Summary
+            firstName={this.state.firstName}
+            lastName={this.state.lastName}
+            customerItems={this.state.itemsForSummary}
+            weight={this.state.weight}
+            price={this.state.price}
+          />
+        )}
       </div>
     );
   }
@@ -217,4 +286,25 @@ class ItemLine extends React.Component {
   }
 }
 
+class Summary extends React.Component {
+  render() {
+    return (
+      <div>
+        <h2>Thank you for coming to SWAP, {this.props.firstName}!</h2>
+        <p>Today, you got: </p>
+        <ul>
+          {this.props.customerItems.map((data, index) => (
+            <li key={index}>
+              {data.itemName}: {data.quantity}
+            </li>
+          ))}
+        </ul>
+        <p>
+          You saved approximately {this.props.weight} lbs worth of clothing from
+          waste and also approximately ${this.props.price}.
+        </p>
+      </div>
+    );
+  }
+}
 export default CustomerCheckout;

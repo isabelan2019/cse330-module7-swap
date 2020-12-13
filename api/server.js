@@ -93,7 +93,8 @@ app.post("/addInventoryCategory", (req, res) => {
   let newInventoryCategory = new InventoryItem();
   newInventoryCategory._id = new ObjectID();
   newInventoryCategory.category = req.body.category;
-  newInventoryCategory.totalQuantity = 0;
+  newInventoryCategory.priceEstimate = 5.0;
+  newInventoryCategory.weightEstimate = 0.1;
   newInventoryCategory.itemTypes = [];
   newInventoryCategory.save(function (err, data) {
     if (err) {
@@ -103,6 +104,24 @@ app.post("/addInventoryCategory", (req, res) => {
     }
   });
 });
+
+// app.post("/summaryCalculations", (req, res) => {
+//   let allItems = [];
+//   for (let key in req.body.items) {
+//     allItems.push(req.body.items[key].categoryID);
+//   }
+//   console.log("line113");
+//   console.log(allItems);
+
+//   InventoryItem.find({ _id: { $in: allItems } }, function (err, data) {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       console.log(data);
+//       res.json(data);
+//     }
+//   });
+// });
 
 app.post("/customerCheckout", (req, res) => {
   console.log(req.body);
@@ -124,8 +143,7 @@ app.post("/customerCheckout", (req, res) => {
     };
     items.push(eachItem);
   }
-  console.log("line 126");
-  console.log(items);
+
   newTransaction.items = items;
 
   newTransaction.save(function (err, data) {
@@ -368,70 +386,3 @@ app.post("/changeVerification", function (req, res) {
   withAuth(req, res);
   // console.log("verificaiton token");
 });
-
-//set up code for mongoDB from  https://github.com/mongodb/node-mongodb-native
-// Connection URL
-// const url = 'mongodb://localhost:27017';
-
-// // Database Name
-// const dbName = 'swap';
-
-// Use connect method to connect to the server
-// MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
-//   assert.equal(null, err);
-//   console.log("Connected successfully to server");
-//   const db = client.db(dbName);
-//   client.close();
-// });
-
-// const insertDocuments = function(db, callback) {
-//   // console.log("hi");
-//   // Get the documents collection
-//   const collection = db.collection('shirts');
-//   // Insert some documents
-//   collection.insertMany([
-//     {a : 1}, {a : 2}, {a : 3}
-//   ], function(err, result) {
-//     assert.equal(err, null);
-//     assert.equal(3, result.result.n);
-//     assert.equal(3, result.ops.length);
-//     console.log(db.collection);
-//     callback(result);
-//   });
-
-// }
-// const findDocuments = function(db, callback) {
-//   // Get the documents collection
-//   const collection = db.collection('shirts');
-//   // Find some documents
-//   collection.find({}).toArray(function(err, docs) {
-//     assert.equal(err, null);
-//     console.log("Found the following records");
-//     console.log(docs)
-//     callback(docs);
-//   });
-// }
-// const removeDocument = function(db, callback) {
-//   // Get the documents collection
-//   const collection = db.collection('shirts');
-
-//   //deletes all in shirts
-//   collection.deleteMany({ },)
-//   .then (function(err, result) {
-//     assert.equal(err, null);
-//    // assert.equal(1, result.result.n);
-//     console.log("Removed all");
-//     // console.log(result);
-//     callback(result);
-//   });
-
-// Delete document where a is 3
-// collection.deleteMany({ a : 1 }, function(err, result) {
-//   assert.equal(err, null);
-//   assert.equal(1, result.result.n);
-//   console.log("Removed the document with the field a equal to 1");
-//   // console.log(result);
-//   callback(result);
-// });
-// findDocuments();
-// }
