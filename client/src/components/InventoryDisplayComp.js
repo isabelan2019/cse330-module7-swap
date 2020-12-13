@@ -27,7 +27,7 @@ class InventoryPage extends React.Component {
   }
 
   getData() {
-    axios.get("http://localhost:5000/getAllInventory").then((res) => {
+    axios.get("/getAllInventory").then((res) => {
       let allCategories = [];
       const data = res.data;
       console.log(data);

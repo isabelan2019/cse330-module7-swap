@@ -76,7 +76,7 @@ class CustomerCheckout extends React.Component {
     });
 
     axios
-      .post("/customerCheckoutChangeInventory", customerCheckoutObj)
+      .post("http://localhost:5000/customerCheckoutChangeInventory", customerCheckoutObj)
       .then((res) => {
         console.log(res.data);
       });
@@ -136,8 +136,21 @@ class CustomerCheckout extends React.Component {
     // });
   }
   render() {
+    const notHours = false;
+    let notOpen ;
+    if (notHours){
+      notOpen= 
+      <div>
+        <h1>Welcome to SWAP</h1>
+        <p>It is not currently hours</p>
+      </div>
+      ;
+    } else {
+
+    }
     return (
       <div>
+        {notOpen}
         <h1>SWAP Customer Checkout</h1>
         <form onSubmit={this.submitCheckout}>
           <label>

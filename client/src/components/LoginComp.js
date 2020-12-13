@@ -205,9 +205,14 @@ class EmployeeNav extends React.Component {
     }
     changeVerification(obj){
         if (sessionStorage.getItem("username")){
-            axios.post('http://localhost:5000/changeVerification', {withCredentials: true},obj)
+            axios.post('http://localhost:5000/changeVerification', obj)
             .then(res => {
                 console.log(res.data);
+                if (!res.data._id){
+                    alert("error: " + JSON.stringify(res.data.message));
+                } else {
+                    alert("code changed");
+                }
             }); 
         } else {
             alert("you are not signed in");
@@ -262,7 +267,8 @@ class VerificationForm extends React.Component{
         // console.log(this.props);
         const verificationObj={
             oldVerification: this.state.oldVerification,
-            newVerification: this.state.newVerification
+            newVerification: this.state.newVerification,
+            date: new Date()
         }
         console.log(verificationObj);
 

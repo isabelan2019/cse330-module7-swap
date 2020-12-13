@@ -39,9 +39,15 @@ class CreateEmployee extends React.Component{
       // };
   
       axios.post('http://localhost:5000/createEmployees', employeeObj)
-        .then(res => console.log(res.data));
+        .then(res => {
+          console.log(res.data);
+          if (!res.data.username) {
+            alert("error: "+res.data.message);
+          } else {
+            alert("success");
+          }
+        });
         
-      
   
     }
     showRegisterForm(){
