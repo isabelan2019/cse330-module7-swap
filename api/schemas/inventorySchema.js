@@ -9,11 +9,10 @@ const inventorySchema = new Schema({
       item_id: mongoose.Schema.Types.ObjectId,
       itemName: String,
       quantity: Number,
-      priceEstimate: Number,
-      weightEstimate: Number,
     },
   ],
-  totalQuantity: Number,
+  priceEstimate: Number,
+  weightEstimate: Number,
 });
 
 module.exports = mongoose.model("inventoryItems", inventorySchema, "inventory");
