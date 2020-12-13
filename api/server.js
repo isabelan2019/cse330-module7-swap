@@ -71,39 +71,43 @@ app.post("/createEmployees", (req, res) => {
     } else if (!verification){
       res.send({message: "invalid verification code"});
     } else {
-      //verification correct
-      // verified =true;
-      let newEmployee = new Employee();
-      newEmployee.firstName = req.body.firstName;
-      newEmployee.lastName = req.body.lastName;
-      newEmployee.username = req.body.username;
-      newEmployee._id = new ObjectID();
-      // newEmployee.password;
-      bcrypt.hash(req.body.password, saltRounds, function (err, hashedPassword) {
+            // verified =true;
+
+      Employee.findOne({username: req.body.username}, function(err, user) {
         if (err) {
-          // res.send("could not hash");
-          res.send({message: "could not hash"});
-        } else {
-          newEmployee.password = hashedPassword;
-          newEmployee.save(function (err, data) {
+          res.send("error finding database");
+        } else if (user){
+          res.send("username already exists");
+        }else {
+          let newEmployee = new Employee();
+          newEmployee.firstName = req.body.firstName;
+          newEmployee.lastName = req.body.lastName;
+          newEmployee.username = req.body.username;
+          newEmployee._id = new ObjectID();
+          // newEmployee.password;
+          bcrypt.hash(req.body.password, saltRounds, function (err, hashedPassword) {
             if (err) {
-              console.log(err);
-              res.send({message: "error saving employee"});
+              // res.send("could not hash");
+              res.send({message: "could not hash"});
             } else {
-              res.json(data);
+              newEmployee.password = hashedPassword;
+              newEmployee.save(function (err, data) {
+                if (err) {
+                  console.log(err);
+                  res.send({message: "error saving employee"});
+                } else {
+                  res.json(data);
+                }
+              });
             }
           });
+
         }
-      });
+
+      });     
     }
   });
-  // if (verified=true) {
-  //   console.log("verified");
-   
-  // }
-  // else {
 
-  // }
 
 });
 

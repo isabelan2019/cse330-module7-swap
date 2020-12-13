@@ -42,7 +42,7 @@ class CreateEmployee extends React.Component{
         .then(res => {
           console.log(res.data);
           if (!res.data.username) {
-            alert("error: "+res.data.message);
+            alert("error: "+JSON.stringify(res.data));
           } else {
             alert("success");
           }
