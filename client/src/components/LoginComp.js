@@ -15,7 +15,8 @@ class Login extends React.Component {
         super(props);
         this.state = {
             show: false,
-            isLoggedIn: false
+            isLoggedIn: false,
+            date: new Date()
         };
         this.showLogin = this.showLogin.bind(this);
         this.logout = this.logout.bind(this);
@@ -104,8 +105,27 @@ class Login extends React.Component {
         } else {
             // buttonText="log out";
             loginButton = <button onClick={this.showLogin}> Login</button>;
-            customerCheckout = <CustomerCheckout/>;
             register = <CreateEmployee />
+
+            // if during hours, checkout form
+            //if not during hours, store closed
+            console.log(this.state.date.getDay());
+            const dayOfWeek = this.state.date.getDay();
+            const hours = this.state.date.getHours();
+            console.log(hours);
+            if (dayOfWeek>0 && dayOfWeek<6) { //mon-fri
+                if (11<hours && hours<14){ //11-2
+                    customerCheckout = <CustomerCheckout/>;
+                } else {
+                    customerCheckout = 
+                <h1>The store is not open at this time. 
+                    Come back later!</h1>;
+                }
+            } else {
+                customerCheckout = 
+                <h1>The store is not open at this time. 
+                    Come back later!</h1>;
+            }
         }
         return (
             <div>

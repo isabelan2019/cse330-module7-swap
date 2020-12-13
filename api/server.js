@@ -107,8 +107,6 @@ app.post("/createEmployees", (req, res) => {
       });     
     }
   });
-
-
 });
 
 app.post("/addInventoryCategory", (req, res) => {

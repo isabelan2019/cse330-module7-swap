@@ -33,6 +33,7 @@ class CustomerCheckout extends React.Component {
 
   getData() {
     axios.get("http://localhost:5000/getAllInventory").then((res) => {
+      
       let allCategories = [];
       const data = res.data;
       console.log(data);
