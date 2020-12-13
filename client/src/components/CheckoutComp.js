@@ -33,6 +33,7 @@ class CustomerCheckout extends React.Component {
 
   getData() {
     axios.get("http://localhost:5000/getAllInventory").then((res) => {
+      
       let allCategories = [];
       const data = res.data;
       console.log(data);
@@ -76,7 +77,7 @@ class CustomerCheckout extends React.Component {
     });
 
     axios
-      .post("/customerCheckoutChangeInventory", customerCheckoutObj)
+      .post("http://localhost:5000/customerCheckoutChangeInventory", customerCheckoutObj)
       .then((res) => {
         console.log(res.data);
       });
@@ -101,7 +102,7 @@ class CustomerCheckout extends React.Component {
         let eachItemPrice = 0;
         let eachItemWeight = 0;
         for (let j in res.data) {
-          if (summaryItems[i].categoryID == res.data[j]._id) {
+          if (summaryItems[i].categoryID === res.data[j]._id) {
             eachItemPrice = res.data[j].priceEstimate;
             eachItemWeight = res.data[j].weightEstimate;
             console.log(eachItemPrice);
@@ -136,8 +137,22 @@ class CustomerCheckout extends React.Component {
     // });
   }
   render() {
+    const notHours = false;
+    let notOpen ;
+    if (notHours){
+      notOpen= 
+      <div>
+        <h1>Welcome to SWAP</h1>
+        <p>It is not currently hours</p>
+      </div>
+      ;
+    } else {
+
+    }
     return (
       <div>
+        {notOpen}
+        <h1>SWAP Customer Checkout</h1>
         <form onSubmit={this.submitCheckout}>
           <label>
             First Name:

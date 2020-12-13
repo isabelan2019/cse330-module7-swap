@@ -25,6 +25,7 @@ const withAuth = require("./token");
 const Employee = require("./schemas/employeesSchema");
 const InventoryItem = require("./schemas/inventorySchema");
 const Transaction = require("./schemas/transactionsSchema");
+const Verification = require("./schemas/verificationSchema");
 // mongoose.connect("mongodb://localhost/grocerydb", { useNewUrlParser: true, useUnifiedTopology: true })
 //   .catch(error => handleError(error));
 
@@ -60,33 +61,52 @@ app.get("/", (req, res) => {
 
 // //send POST request to mongoDB database: https://www.geeksforgeeks.org/nodejs-crud-operations-using-mongoose-and-mongodb-atlas/
 app.post("/createEmployees", (req, res) => {
-  if (req.body.verification == "yes") {
-    let newEmployee = new Employee();
-    newEmployee.firstName = req.body.firstName;
-    newEmployee.lastName = req.body.lastName;
-    newEmployee.username = req.body.username;
-    newEmployee._id = new ObjectID();
-    // newEmployee.password;
-    bcrypt.hash(req.body.password, saltRounds, function (err, hashedPassword) {
-      if (err) {
-        // res.send("could not hash");
-        res.send(err);
-      } else {
-        newEmployee.password = hashedPassword;
-        newEmployee.save(function (err, data) {
-          if (err) {
-            console.log(err);
-          } else {
-            res.json(data);
-          }
-        });
-      }
-    });
-  } else {
-    res.send({
-      message: "You do not have permissions to create an employee account.",
-    });
-  }
+  // console.log("verification ",req.body.verification);
+  const verification = req.body.verification;
+  // let verified;
+  Verification.findOne({ verification: verification }, function (err, verification) {
+    if (err) {
+      console.error(err);
+      res.send("error finding database");
+    } else if (!verification){
+      res.send({message: "invalid verification code"});
+    } else {
+            // verified =true;
+
+      Employee.findOne({username: req.body.username}, function(err, user) {
+        if (err) {
+          res.send("error finding database");
+        } else if (user){
+          res.send("username already exists");
+        }else {
+          let newEmployee = new Employee();
+          newEmployee.firstName = req.body.firstName;
+          newEmployee.lastName = req.body.lastName;
+          newEmployee.username = req.body.username;
+          newEmployee._id = new ObjectID();
+          // newEmployee.password;
+          bcrypt.hash(req.body.password, saltRounds, function (err, hashedPassword) {
+            if (err) {
+              // res.send("could not hash");
+              res.send({message: "could not hash"});
+            } else {
+              newEmployee.password = hashedPassword;
+              newEmployee.save(function (err, data) {
+                if (err) {
+                  console.log(err);
+                  res.send({message: "error saving employee"});
+                } else {
+                  res.json(data);
+                }
+              });
+            }
+          });
+
+        }
+
+      });     
+    }
+  });
 });
 
 app.post("/addInventoryCategory", (req, res) => {
@@ -355,17 +375,12 @@ app.post("/login", (req, res) => {
           } else {
             const isLoggedIn = true;
             // res.send(isLoggedIn);
-            const payload = user.username;
-            const token = jwt.sign(payload, cryptoRandom);
-            res
-              .cookie(
-                "token",
-                token,
-                { httpOnly: true },
-                { expires: new Date(Date.now() + 3600000) }
-              )
-              .sendStatus(200);
-            console.log(res.cookie);
+            res.loggedIn = true;
+            res.username = user.username;
+            req.session.username = user.username;
+            console.log("cookie",res.username);
+            res.send({isLoggedIn: isLoggedIn, username: user.username});
+            
           }
         }
       });
@@ -377,12 +392,32 @@ app.post("/logout", function (req, res) {
   console.log("you are logging out");
   // res.send("logging out");
   // console.log(res.cookie.token);
+  req.session=null;
   res.clearCookie("token").sendStatus(200);
 });
 
 app.post("/changeVerification", function (req, res) {
   console.log("changing verification");
+  const oldVerification = {verification:req.body.oldVerification};
+  const newVerification = {
+    verification: req.body.newVerification,
+    date: req.body.date
+  };
+  console.log("received: "+ JSON.stringify(req.body));
 
-  withAuth(req, res);
+  // let verified;
+  Verification.findOneAndUpdate( oldVerification,newVerification,function (err, data) {
+    if (err) {
+      console.log("err",err);
+      res.send({message: err});
+    } else if (!data) {
+      console.log("verified",JSON.stringify(data));
+      res.send({message: "invalid verification code"});
+    } else {
+      res.send(data);
+    }
+  });
+
+  // withAuth(req, res);
   // console.log("verificaiton token");
 });

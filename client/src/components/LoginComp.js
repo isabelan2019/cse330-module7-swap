@@ -2,6 +2,9 @@ import React from "react";
 // import ReactDOM from "react-dom";
 // import "./index.css";
 import axios from "axios";
+import NavBar from "./NavBarComp";
+import CreateEmployee from "./CreateEmployee Comp";
+import CustomerCheckout from "./CheckoutComp";
 
 // import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
 // import employeesSchema from "../../../api/schemas/employeesSchema";
@@ -12,7 +15,8 @@ class Login extends React.Component {
         super(props);
         this.state = {
             show: false,
-            isLoggedIn: true
+            isLoggedIn: false,
+            date: new Date()
         };
         this.showLogin = this.showLogin.bind(this);
         this.logout = this.logout.bind(this);
@@ -40,17 +44,11 @@ class Login extends React.Component {
         console.log("sending"+JSON.stringify(loginObj));
         axios.post('http://localhost:5000/login', loginObj)
         .then(res => {
-            console.log(res.data);
+            console.log(JSON.stringify(res.data));
             if (!res.data){
                 alert("could not be logged in: "+res.data);
-                
             } else {
-                if (res.status===200){
-                    console.log(JSON.stringify(res));
-                    // this.props.history.push("/");
-                    // setAuth(data);
-
-                }
+                sessionStorage.setItem("username",res.data.username);
                 this.setState({
                     isLoggedIn: true,
                 });
@@ -69,13 +67,23 @@ class Login extends React.Component {
         // show = !show;
     }
     logout(){
-        this.setState({
-            isLoggedIn: false
+        axios.post('http://localhost:5000/logout')
+        .then(res => {
+            console.log(res.data);
+            sessionStorage.clear();
+            this.setState({
+                isLoggedIn: false
+            });
+            sessionStorage.removeItem("username");
+            sessionStorage.clear();
         });
+        
+        // this.render();
 
     }
     render (){
         const show = this.state.show;
+        let loginButton;
         let form ;
         if (show){
             form = <LoginForm 
@@ -83,21 +91,55 @@ class Login extends React.Component {
             onLoginChange={this.changeHandler}
             />
         }
-        const isLoggedIn = this.state.isLoggedIn;
+        const loggedIn = sessionStorage.getItem("username");
         let employeeNav;
+        let navBar;
+        let customerCheckout;
+        let register;
         // let buttonText;
-        if (isLoggedIn){
+        if (loggedIn){
             // buttonText = "Login";
             employeeNav = <EmployeeNav 
             loggedOut={this.logout}/>
+            navBar =<NavBar />
         } else {
             // buttonText="log out";
+            loginButton = <button onClick={this.showLogin}> Login</button>;
+            register = <CreateEmployee />
+
+            // if during hours, checkout form
+            //if not during hours, store closed
+            console.log(this.state.date.getDay());
+            const dayOfWeek = this.state.date.getDay();
+            const hours = this.state.date.getHours();
+            console.log(hours);
+            if (dayOfWeek>0 && dayOfWeek<6) { //mon-fri
+                if (11<hours && hours<14){ //11-2
+                    customerCheckout = <CustomerCheckout/>;
+                } else {
+                    customerCheckout = 
+                <h1>The store is not open at this time. 
+                    Come back later!</h1>;
+                }
+            } else {
+                customerCheckout = 
+                <h1>The store is not open at this time. 
+                    Come back later!</h1>;
+            }
         }
         return (
-            <div id="login">
-                <button onClick={this.showLogin}> Login</button>
-                {form}
-                {employeeNav}
+            <div>
+                <div id="notLoggedIn">
+                    {loginButton}
+                    {form}
+                    {register}
+                    {customerCheckout}
+                </div>
+                <div id="loggedIn">
+                    {employeeNav}
+                    {navBar}
+                </div>
+
             </div>
         );
     }
@@ -172,11 +214,9 @@ class EmployeeNav extends React.Component {
         });
     }
     logout(){
-        axios.post('http://localhost:5000/logout')
-        .then(res => {
-            console.log(res.data);
-            this.props.loggedOut();
-        });
+        
+        this.props.loggedOut();
+
         // this.setState({showLogout:true});
 
     }
@@ -184,10 +224,20 @@ class EmployeeNav extends React.Component {
         this.setState({showVerification:!this.state.showVerification});
     }
     changeVerification(obj){
-        axios.post('http://localhost:5000/changeVerification', obj)
-        .then(res => {
-            console.log(res.data);
-        });
+        if (sessionStorage.getItem("username")){
+            axios.post('http://localhost:5000/changeVerification', obj)
+            .then(res => {
+                console.log(res.data);
+                if (!res.data._id){
+                    alert("error: " + JSON.stringify(res.data.message));
+                } else {
+                    alert("code changed");
+                }
+            }); 
+        } else {
+            alert("you are not signed in");
+        }
+        
 
     }
     render(){
@@ -202,6 +252,7 @@ class EmployeeNav extends React.Component {
         return (
           
         <div>
+            <p>Welcome {sessionStorage.getItem("username")}</p>
           <nav>
             <button onClick={this.logout}>Logout</button>
             <button onClick={this.showVerification}>Change Verification </button>
@@ -236,7 +287,8 @@ class VerificationForm extends React.Component{
         // console.log(this.props);
         const verificationObj={
             oldVerification: this.state.oldVerification,
-            newVerification: this.state.newVerification
+            newVerification: this.state.newVerification,
+            date: new Date()
         }
         console.log(verificationObj);
 

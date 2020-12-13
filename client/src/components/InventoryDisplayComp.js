@@ -27,7 +27,7 @@ class InventoryPage extends React.Component {
   }
 
   getData() {
-    axios.get("http://localhost:5000/getAllInventory").then((res) => {
+    axios.get("/getAllInventory").then((res) => {
       let allCategories = [];
       const data = res.data;
       console.log(data);
@@ -132,12 +132,18 @@ class InventoryPage extends React.Component {
       });
   }
   render() {
-    return (
-      <div>
+    const isLoggedIn = sessionStorage.getItem("username");
+    let notLoggedIn ;
+    let inventory;
+    if (!isLoggedIn){
+      //no username set
+      notLoggedIn =<p>You are not logged in.</p>
+    } else {
+      inventory=  <div>
         <InventoryDisplay
-          displayCategory={this.state.inventoryData}
-          deleteItem={this.deleteItem}
-          editQuantity={this.editQuantity}
+        displayCategory={this.state.inventoryData}
+        deleteItem={this.deleteItem}
+        editQuantity={this.editQuantity}
         />
         <InventoryCategory
           onCategoryChange={this.handleCategoryChange}
@@ -152,6 +158,14 @@ class InventoryPage extends React.Component {
           itemNameValue={this.state.itemName}
           quantityValue={this.state.quantity}
         />
+        </div>
+
+    }
+    return (
+      <div>
+        {notLoggedIn}
+        {inventory}
+        
       </div>
     );
   }
