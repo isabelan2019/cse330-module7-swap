@@ -269,7 +269,7 @@ app.get("/getAllInventory", (req, res) => {
 });
 
 app.get("/getTransactions", (req, res) => {
-  Transaction.find({}, {sort: date}, function (err, data) {
+  Transaction.find({}, function (err, data) {
     if (err) {
       console.log(err);
     } else {
