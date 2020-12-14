@@ -35,7 +35,6 @@ class CustomerCheckout extends React.Component {
 
   getData() {
     axios.get("http://localhost:5000/getAllInventory").then((res) => {
-      
       let allCategories = [];
       const data = res.data;
       console.log(data);
@@ -79,7 +78,10 @@ class CustomerCheckout extends React.Component {
     });
 
     axios
-      .post("http://localhost:5000/customerCheckoutChangeInventory", customerCheckoutObj)
+      .post(
+        "http://localhost:5000/customerCheckoutChangeInventory",
+        customerCheckoutObj
+      )
       .then((res) => {
         console.log(res.data);
       });
@@ -90,9 +92,9 @@ class CustomerCheckout extends React.Component {
   }
 
   getCalculations() {
-    const summaryInfo = {
-      items: this.state.items,
-    };
+    // const summaryInfo = {
+    //   items: this.state.items,
+    // };
     const summaryItems = Object.values(this.state.items);
     console.log("line 94");
     console.log(summaryItems);
@@ -140,16 +142,15 @@ class CustomerCheckout extends React.Component {
   }
   render() {
     const notHours = false;
-    let notOpen ;
-    if (notHours){
-      notOpen= 
-      <div>
-        <h1>Welcome to SWAP</h1>
-        <p>It is not currently hours</p>
-      </div>
-      ;
+    let notOpen;
+    if (notHours) {
+      notOpen = (
+        <div>
+          <h1>Welcome to SWAP</h1>
+          <p>It is not currently hours</p>
+        </div>
+      );
     } else {
-
     }
     return (
       <div>
