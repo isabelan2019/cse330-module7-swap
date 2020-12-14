@@ -66,12 +66,19 @@ class CustomerCheckout extends React.Component {
 
   submitCheckout(event) {
     event.preventDefault();
+    const items = this.state.items;
+    for (let key in items) {
+      if (items[key].quantity == 0) {
+        delete items[key];
+      }
+    }
+    console.log(items);
     const customerCheckoutObj = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
       email: this.state.email,
       date: this.state.date,
-      items: this.state.items,
+      items: items,
     };
     axios.post("/customerCheckout", customerCheckoutObj).then((res) => {
       console.log(res.data);
