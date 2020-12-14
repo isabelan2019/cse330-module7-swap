@@ -1,5 +1,7 @@
 import React from "react";
 import axios from "axios";
+import "./../index.css";
+
 
 class CustomerCheckout extends React.Component {
   constructor(props) {

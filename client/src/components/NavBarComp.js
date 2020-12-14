@@ -1,6 +1,8 @@
 import React from "react";
 // import ReactDOM from "react-dom";
 // import "./index.css";
+import "./../index.css";
+
 // import axios from "axios";
 import CustomerCheckout from "./CheckoutComp";
 import TransactionsLog from "./TransactionsLogComp";
@@ -18,21 +20,21 @@ class NavBar extends React.Component {
       return (
         <div>
           <Router>
-            <nav>
+            <nav id="employeeNav">
               {/* <button>
                 <Link to="/">Home</Link>
               </button> */}
               <button>
                 {" "}
-                <Link to="/checkout">Checkout</Link>
+                <Link style={{ textDecoration: 'none' }} to="/checkout">Checkout</Link>
               </button>
               <button>
                 {" "}
-                <Link to="/transactions">Transactions</Link>{" "}
+                <Link style={{ textDecoration: 'none' }} to="/transactions">Transactions</Link>{" "}
               </button>
               <button>
                 {" "}
-                <Link to="/inventory">Inventory Log</Link>
+                <Link style={{ textDecoration: 'none' }} to="/inventory">Inventory Log</Link>
               </button>
             </nav>
             <Switch>

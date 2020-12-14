@@ -1,5 +1,7 @@
 import React from "react";
 import axios from "axios";
+import "./../index.css";
+
 
 class TransactionsLog extends React.Component {
   constructor(props) {
@@ -158,6 +160,33 @@ class TransactionsLog extends React.Component {
       }
       this.setState({ transactionsData: allTransactions });
     });
+  }
+  sortDate(){
+    // const obj = "date";
+    // axios.get("http://localhost:5000/getTransactions", obj).then((res) => {
+    //   let allTransactions = [];
+    //   const data = res.data;
+    //   console.log("transaction data");
+    //   console.log(data);
+    //   for (let i in data) {
+    //     allTransactions.push(data[i]);
+    //     let allItems = [];
+    //     let customerInfo = [];
+    //     for (let j in data[i].items) {
+    //       allItems.push(data[i].items[j]);
+    //     }
+    //     for (let k in data[i].customer) {
+    //       customerInfo.push(data[i].customer[k]);
+    //     }
+    //     allTransactions[i].items = allItems;
+    //     allTransactions[i].customer = customerInfo;
+    //   }
+    //   this.setState({ transactionsData: allTransactions });
+    // });
+  
+  }
+  sortName(){
+
   }
 
   render() {
