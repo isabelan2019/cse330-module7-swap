@@ -64,58 +64,65 @@ app.post("/createEmployees", (req, res) => {
   // console.log("verification ",req.body.verification);
   const verification = req.body.verification;
   // let verified;
-  Verification.findOne({ verification: verification }, function (err, verification) {
-    if (err) {
-      console.error(err);
-      res.send("error finding database");
-    } else if (!verification){
-      res.send({message: "invalid verification code"});
-    } else {
-            // verified =true;
+  Verification.findOne(
+    { verification: verification },
+    function (err, verification) {
+      if (err) {
+        console.error(err);
+        res.send("error finding database");
+      } else if (!verification) {
+        res.send({ message: "invalid verification code" });
+      } else {
+        // verified =true;
 
-      Employee.findOne({username: req.body.username}, function(err, user) {
-        if (err) {
-          res.send("error finding database");
-        } else if (user){
-          res.send("username already exists");
-        }else {
-          let newEmployee = new Employee();
-          newEmployee.firstName = req.body.firstName;
-          newEmployee.lastName = req.body.lastName;
-          newEmployee.username = req.body.username;
-          newEmployee._id = new ObjectID();
-          // newEmployee.password;
-          bcrypt.hash(req.body.password, saltRounds, function (err, hashedPassword) {
-            if (err) {
-              // res.send("could not hash");
-              res.send({message: "could not hash"});
-            } else {
-              newEmployee.password = hashedPassword;
-              newEmployee.save(function (err, data) {
+        Employee.findOne({ username: req.body.username }, function (err, user) {
+          if (err) {
+            res.send("error finding database");
+          } else if (user) {
+            res.send("username already exists");
+          } else {
+            let newEmployee = new Employee();
+            newEmployee.firstName = req.body.firstName;
+            newEmployee.lastName = req.body.lastName;
+            newEmployee.username = req.body.username;
+            newEmployee._id = new ObjectID();
+            // newEmployee.password;
+            bcrypt.hash(
+              req.body.password,
+              saltRounds,
+              function (err, hashedPassword) {
                 if (err) {
-                  console.log(err);
-                  res.send({message: "error saving employee"});
+                  // res.send("could not hash");
+                  res.send({ message: "could not hash" });
                 } else {
-                  res.json(data);
+                  newEmployee.password = hashedPassword;
+                  newEmployee.save(function (err, data) {
+                    if (err) {
+                      console.log(err);
+                      res.send({ message: "error saving employee" });
+                    } else {
+                      res.json(data);
+                    }
+                  });
                 }
-              });
-            }
-          });
-
-        }
-
-      });     
+              }
+            );
+          }
+        });
+      }
     }
-  });
+  );
 });
 
 app.post("/addInventoryCategory", (req, res) => {
   let newInventoryCategory = new InventoryItem();
   newInventoryCategory._id = new ObjectID();
   newInventoryCategory.category = req.body.category;
-  newInventoryCategory.priceEstimate = 5.0;
-  newInventoryCategory.weightEstimate = 0.1;
+  newInventoryCategory.priceEstimate = req.body.price;
+  newInventoryCategory.weightEstimate = req.body.weight;
   newInventoryCategory.itemTypes = [];
+  console.log(req.body);
+  console.log(newInventoryCategory);
   newInventoryCategory.save(function (err, data) {
     if (err) {
       console.log(err);
@@ -268,6 +275,101 @@ app.get("/getAllInventory", (req, res) => {
   });
 });
 
+app.get("/getLastHour", (req, res) => {
+  let today = new Date();
+  const msToday = Date.now(today);
+  const msInHour = 3600000;
+  const dayAgo = Number(msToday) - msInHour;
+  const startDate = new Date(dayAgo);
+  Transaction.find(
+    { date: { $gte: startDate, $lte: today } },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+        res.json(data);
+      }
+    }
+  );
+});
+
+app.get("/getLastDay", (req, res) => {
+  let today = new Date();
+  const msToday = Date.now(today);
+  const msInDay = 86400000;
+  const dayAgo = Number(msToday) - msInDay;
+  const startDate = new Date(dayAgo);
+  Transaction.find(
+    { date: { $gte: startDate, $lte: today } },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+        res.json(data);
+      }
+    }
+  );
+});
+
+app.get("/getLastWeek", (req, res) => {
+  let today = new Date();
+  const msToday = Date.now(today);
+  const msInWeek = 86400000 * 7;
+  const dayAgo = Number(msToday) - msInWeek;
+  const startDate = new Date(dayAgo);
+  Transaction.find(
+    { date: { $gte: startDate, $lte: today } },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+        res.json(data);
+      }
+    }
+  );
+});
+
+app.get("/getLastMonth", (req, res) => {
+  let today = new Date();
+  const msToday = Date.now(today);
+  const msInMonth = 86400000 * 7 * 30;
+  const dayAgo = Number(msToday) - msInMonth;
+  const startDate = new Date(dayAgo);
+  Transaction.find(
+    { date: { $gte: startDate, $lte: today } },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+        res.json(data);
+      }
+    }
+  );
+});
+
+app.get("/getLastYear", (req, res) => {
+  let today = new Date();
+  const msToday = Date.now(today);
+  const msInYear = 86400000 * 7 * 52;
+  const dayAgo = Number(msToday) - msInYear;
+  const startDate = new Date(dayAgo);
+  Transaction.find(
+    { date: { $gte: startDate, $lte: today } },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(data);
+        res.json(data);
+      }
+    }
+  );
+});
+
 app.get("/getTransactions", (req, res) => {
   Transaction.find({}, function (err, data) {
     if (err) {
@@ -294,6 +396,17 @@ app.post("/deleteInventoryItem", (req, res) => {
       }
     }
   );
+});
+
+app.post("/deleteCategory", (req, res) => {
+  const categoryID = req.body.categoryID;
+  InventoryItem.findByIdAndDelete(categoryID, function (err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.json(data);
+    }
+  });
 });
 
 app.post("/editInventoryQuantity", (req, res) => {
@@ -378,9 +491,8 @@ app.post("/login", (req, res) => {
             res.loggedIn = true;
             res.username = user.username;
             req.session.username = user.username;
-            console.log("cookie",res.username);
-            res.send({isLoggedIn: isLoggedIn, username: user.username});
-            
+            console.log("cookie", res.username);
+            res.send({ isLoggedIn: isLoggedIn, username: user.username });
           }
         }
       });
@@ -392,31 +504,35 @@ app.post("/logout", function (req, res) {
   console.log("you are logging out");
   // res.send("logging out");
   // console.log(res.cookie.token);
-  req.session=null;
+  req.session = null;
   res.clearCookie("token").sendStatus(200);
 });
 
 app.post("/changeVerification", function (req, res) {
   console.log("changing verification");
-  const oldVerification = {verification:req.body.oldVerification};
+  const oldVerification = { verification: req.body.oldVerification };
   const newVerification = {
     verification: req.body.newVerification,
-    date: req.body.date
+    date: req.body.date,
   };
-  console.log("received: "+ JSON.stringify(req.body));
+  console.log("received: " + JSON.stringify(req.body));
 
   // let verified;
-  Verification.findOneAndUpdate( oldVerification,newVerification,function (err, data) {
-    if (err) {
-      console.log("err",err);
-      res.send({message: err});
-    } else if (!data) {
-      console.log("verified",JSON.stringify(data));
-      res.send({message: "invalid verification code"});
-    } else {
-      res.send(data);
+  Verification.findOneAndUpdate(
+    oldVerification,
+    newVerification,
+    function (err, data) {
+      if (err) {
+        console.log("err", err);
+        res.send({ message: err });
+      } else if (!data) {
+        console.log("verified", JSON.stringify(data));
+        res.send({ message: "invalid verification code" });
+      } else {
+        res.send(data);
+      }
     }
-  });
+  );
 
   // withAuth(req, res);
   // console.log("verificaiton token");

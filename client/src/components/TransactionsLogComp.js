@@ -8,6 +8,11 @@ class TransactionsLog extends React.Component {
       transactionsData: [],
     };
     this.getData = this.getData.bind(this);
+    this.getLastMonth = this.getLastMonth.bind(this);
+    this.getLastDay = this.getLastDay.bind(this);
+    this.getLastWeek = this.getLastWeek.bind(this);
+    this.getLastYear = this.getLastYear.bind(this);
+    this.getLastHour = this.getLastHour.bind(this);
   }
 
   componentDidMount() {
@@ -18,10 +23,128 @@ class TransactionsLog extends React.Component {
     axios.get("http://localhost:5000/getTransactions").then((res) => {
       let allTransactions = [];
       const data = res.data;
-      console.log("transaction data");
-      console.log(data);
       for (let i in data) {
+        let dateISO = new Date(data[i].date);
+        let date = dateISO.toLocaleString();
         allTransactions.push(data[i]);
+        allTransactions[i].date = date;
+        let allItems = [];
+        let customerInfo = [];
+        for (let j in data[i].items) {
+          allItems.push(data[i].items[j]);
+        }
+        for (let k in data[i].customer) {
+          customerInfo.push(data[i].customer[k]);
+        }
+        allTransactions[i].items = allItems;
+        allTransactions[i].customer = customerInfo;
+      }
+      this.setState({ transactionsData: allTransactions });
+    });
+  }
+  getLastHour() {
+    axios.get("http://localhost:5000/getLastHour").then((res) => {
+      let allTransactions = [];
+      const data = res.data;
+      for (let i in data) {
+        let dateISO = new Date(data[i].date);
+        let date = dateISO.toLocaleString();
+        allTransactions.push(data[i]);
+        allTransactions[i].date = date;
+        let allItems = [];
+        let customerInfo = [];
+        for (let j in data[i].items) {
+          allItems.push(data[i].items[j]);
+        }
+        for (let k in data[i].customer) {
+          customerInfo.push(data[i].customer[k]);
+        }
+        allTransactions[i].items = allItems;
+        allTransactions[i].customer = customerInfo;
+      }
+      this.setState({ transactionsData: allTransactions });
+    });
+  }
+  getLastDay() {
+    axios.get("http://localhost:5000/getLastDay").then((res) => {
+      let allTransactions = [];
+      const data = res.data;
+      for (let i in data) {
+        let dateISO = new Date(data[i].date);
+        let date = dateISO.toLocaleString();
+        allTransactions.push(data[i]);
+        allTransactions[i].date = date;
+        let allItems = [];
+        let customerInfo = [];
+        for (let j in data[i].items) {
+          allItems.push(data[i].items[j]);
+        }
+        for (let k in data[i].customer) {
+          customerInfo.push(data[i].customer[k]);
+        }
+        allTransactions[i].items = allItems;
+        allTransactions[i].customer = customerInfo;
+      }
+      this.setState({ transactionsData: allTransactions });
+    });
+  }
+  getLastWeek() {
+    axios.get("http://localhost:5000/getLastWeek").then((res) => {
+      let allTransactions = [];
+      const data = res.data;
+      for (let i in data) {
+        let dateISO = new Date(data[i].date);
+        let date = dateISO.toLocaleString();
+        allTransactions.push(data[i]);
+        allTransactions[i].date = date;
+        let allItems = [];
+        let customerInfo = [];
+        for (let j in data[i].items) {
+          allItems.push(data[i].items[j]);
+        }
+        for (let k in data[i].customer) {
+          customerInfo.push(data[i].customer[k]);
+        }
+        allTransactions[i].items = allItems;
+        allTransactions[i].customer = customerInfo;
+      }
+      this.setState({ transactionsData: allTransactions });
+    });
+  }
+
+  getLastMonth() {
+    axios.get("http://localhost:5000/getLastMonth").then((res) => {
+      let allTransactions = [];
+      const data = res.data;
+      for (let i in data) {
+        let dateISO = new Date(data[i].date);
+        let date = dateISO.toLocaleString();
+        allTransactions.push(data[i]);
+        allTransactions[i].date = date;
+        let allItems = [];
+        let customerInfo = [];
+        for (let j in data[i].items) {
+          allItems.push(data[i].items[j]);
+        }
+        for (let k in data[i].customer) {
+          customerInfo.push(data[i].customer[k]);
+        }
+        allTransactions[i].items = allItems;
+        allTransactions[i].customer = customerInfo;
+      }
+      this.setState({ transactionsData: allTransactions });
+    });
+  }
+
+  getLastYear() {
+    axios.get("http://localhost:5000/getLastYear").then((res) => {
+      let allTransactions = [];
+      const data = res.data;
+      for (let i in data) {
+        let dateISO = new Date(data[i].date);
+        let date = dateISO.toLocaleString();
+        allTransactions.push(data[i]);
+        allTransactions[i].date = date;
         let allItems = [];
         let customerInfo = [];
         for (let j in data[i].items) {
@@ -42,15 +165,21 @@ class TransactionsLog extends React.Component {
     const isLoggedIn = sessionStorage.getItem("username");
     // let notLoggedIn ;
     // let inventory;
-    
+
     if (!this.state.transactionsData) {
       return null;
-    } else if (!isLoggedIn){
+    } else if (!isLoggedIn) {
       //no username set
       return <p>You are not logged in.</p>;
     }
     return (
       <div>
+        <input type="button" value="All" onClick={this.getData} />
+        <input type="button" value="Last hour" onClick={this.getLastHour} />
+        <input type="button" value="Last day" onClick={this.getLastDay} />
+        <input type="button" value="Last week" onClick={this.getLastWeek} />
+        <input type="button" value="Last month" onClick={this.getLastMonth} />
+        <input type="button" value="Last year" onClick={this.getLastYear} />
         <table>
           <tbody>
             <tr>

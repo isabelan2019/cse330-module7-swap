@@ -6,6 +6,8 @@ class InventoryPage extends React.Component {
     super(props);
     this.state = {
       newCategory: "",
+      weightEstimate: 0,
+      priceEstimate: 0,
       category: "",
       itemName: "",
       quantity: "",
@@ -18,6 +20,7 @@ class InventoryPage extends React.Component {
     this.submitInventoryForm = this.submitInventoryForm.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
     this.editQuantity = this.editQuantity.bind(this);
+    this.deleteCategoryInInventory = this.deleteCategoryInInventory.bind(this);
     // this.sendInventoryDisplay = this.sendInventoryDisplay.bind(this);
   }
 
@@ -47,13 +50,17 @@ class InventoryPage extends React.Component {
   //   this.getData();
   // }
 
-  handleCategoryChange(newCategoryValue) {
-    this.setState({ newCategory: newCategoryValue });
+  handleCategoryChange(newCategoryObj) {
+    this.setState({
+      [newCategoryObj.name]: newCategoryObj.value,
+    });
   }
 
-  submitCategory(newCategory) {
+  submitCategory(newCategoryObj) {
     const categoryObj = {
-      category: newCategory,
+      category: newCategoryObj.category,
+      price: newCategoryObj.price,
+      weight: newCategoryObj.weight,
     };
 
     axios
@@ -67,6 +74,12 @@ class InventoryPage extends React.Component {
         this.getData();
         this.setState({ newCategory: "" });
       });
+
+    this.setState({
+      newCategory: "",
+      priceEstimate: 0,
+      weightEstimate: 0,
+    });
   }
 
   handleInventoryChange(newInventory) {
@@ -92,7 +105,7 @@ class InventoryPage extends React.Component {
     this.setState({
       category: "",
       itemName: "",
-      quantity: "",
+      quantity: 0,
     });
   }
 
@@ -113,6 +126,18 @@ class InventoryPage extends React.Component {
       });
   }
 
+  deleteCategoryInInventory(id) {
+    const deletedObject = {
+      categoryID: id,
+    };
+
+    axios
+      .post("http://localhost:5000/deleteCategory", deletedObject)
+      .then((res) => {
+        console.log(res.data);
+        this.getData();
+      });
+  }
   editQuantity(ids) {
     // event.preventDefault();
     // const itemID = event.target.parentNode.parentNode.id;
@@ -133,39 +158,42 @@ class InventoryPage extends React.Component {
   }
   render() {
     const isLoggedIn = sessionStorage.getItem("username");
-    let notLoggedIn ;
+    let notLoggedIn;
     let inventory;
-    if (!isLoggedIn){
+    if (!isLoggedIn) {
       //no username set
-      notLoggedIn =<p>You are not logged in.</p>
+      notLoggedIn = <p>You are not logged in.</p>;
     } else {
-      inventory=  <div>
-        <InventoryDisplay
-        displayCategory={this.state.inventoryData}
-        deleteItem={this.deleteItem}
-        editQuantity={this.editQuantity}
-        />
-        <InventoryCategory
-          onCategoryChange={this.handleCategoryChange}
-          submitCategory={this.submitCategory}
-          newCategoryValue={this.state.newCategory}
-        />
-        <InventoryForm
-          handleInventoryChange={this.handleInventoryChange}
-          submitInventoryForm={this.submitInventoryForm}
-          displayCategory={this.state.inventoryData}
-          categoryValue={this.state.category}
-          itemNameValue={this.state.itemName}
-          quantityValue={this.state.quantity}
-        />
+      inventory = (
+        <div>
+          <InventoryDisplay
+            displayCategory={this.state.inventoryData}
+            deleteItem={this.deleteItem}
+            editQuantity={this.editQuantity}
+            deleteCategoryInInventory={this.deleteCategoryInInventory}
+          />
+          <InventoryCategory
+            handleCategoryChange={this.handleCategoryChange}
+            submitCategory={this.submitCategory}
+            newCategoryValue={this.state.newCategory}
+            weightEstimateValue={this.state.weightEstimate}
+            priceEstimateValue={this.state.priceEstimate}
+          />
+          <InventoryForm
+            handleInventoryChange={this.handleInventoryChange}
+            submitInventoryForm={this.submitInventoryForm}
+            displayCategory={this.state.inventoryData}
+            categoryValue={this.state.category}
+            itemNameValue={this.state.itemName}
+            quantityValue={this.state.quantity}
+          />
         </div>
-
+      );
     }
     return (
       <div>
         {notLoggedIn}
         {inventory}
-        
       </div>
     );
   }
@@ -183,13 +211,24 @@ class InventoryCategory extends React.Component {
 
   changeHandler(event) {
     event.preventDefault();
-    this.props.onCategoryChange(event.target.value);
+    const nameAttr = event.target.name;
+    const valueAttr = event.target.value;
+    // this.setState({ [event.target.name]: event.target.value });
+    this.props.handleCategoryChange({
+      name: nameAttr,
+      value: valueAttr,
+    });
     // this.setState({ [event.target.name]: event.target.value });
   }
 
   submitHandler(event) {
     event.preventDefault();
-    this.props.submitCategory(this.props.newCategoryValue);
+    const categoryObj = {
+      category: this.props.newCategoryValue,
+      weight: this.props.weightEstimateValue,
+      price: this.props.priceEstimateValue,
+    };
+    this.props.submitCategory(categoryObj);
   }
 
   // axios
@@ -210,9 +249,31 @@ class InventoryCategory extends React.Component {
           Category:
           <input
             type="text"
-            name="category"
+            name="newCategory"
             onChange={this.changeHandler}
             value={this.props.newCategoryValue}
+          />
+        </label>
+        <label>
+          Price Estimate:
+          <input
+            type="number"
+            name="priceEstimate"
+            min="0"
+            step="0.01"
+            onChange={this.changeHandler}
+            value={this.props.priceEstimateValue}
+          />
+        </label>
+        <label>
+          Weight Estimate:
+          <input
+            type="number"
+            name="weightEstimate"
+            min="0"
+            step="0.01"
+            onChange={this.changeHandler}
+            value={this.props.weightEstimateValue}
           />
         </label>
         <input type="submit" value="Add" />
@@ -349,6 +410,7 @@ class InventoryDisplay extends React.Component {
     // this.editQuantity = this.editQuantity.bind(this);
     this.deleteInventory = this.deleteInventory.bind(this);
     this.editInventory = this.editInventory.bind(this);
+    this.deleteCategory = this.deleteCategory.bind(this);
     // this.changeHandler = this.changeHandler.bind(this);
     // this.showEdit = this.showEdit.bind(this);
   }
@@ -430,6 +492,9 @@ class InventoryDisplay extends React.Component {
     this.props.editQuantity(item);
     // this.setState({ view: false });
   }
+  deleteCategory(event) {
+    this.props.deleteCategoryInInventory(event.target.parentNode.id);
+  }
   render() {
     if (!this.props.displayCategory) {
       return null;
@@ -440,6 +505,11 @@ class InventoryDisplay extends React.Component {
           {this.props.displayCategory.map((data) => (
             <li key={data._id} id={data._id}>
               <h2>{data.category}</h2>
+              <input
+                type="button"
+                value="Delete"
+                onClick={this.deleteCategory}
+              />
               <table>
                 <tbody>
                   <tr>
