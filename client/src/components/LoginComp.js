@@ -1,6 +1,6 @@
 import React from "react";
 // import ReactDOM from "react-dom";
-// import "./index.css";
+import "./../index.css";
 import axios from "axios";
 import NavBar from "./NavBarComp";
 import CreateEmployee from "./CreateEmployee Comp";
@@ -99,12 +99,12 @@ class Login extends React.Component {
         // let buttonText;
         if (loggedIn){
             // buttonText = "Login";
-            employeeNav = <EmployeeNav 
-            loggedOut={this.logout}/>
-            navBar =<NavBar />
+            employeeNav = <EmployeeNav
+            loggedOut={this.logout}/>;
+            navBar =<NavBar />;
         } else {
             // buttonText="log out";
-            loginButton = <button onClick={this.showLogin}> Login</button>;
+            loginButton = <button id="loginButton" onClick={this.showLogin}> Login</button>;
             register = <CreateEmployee />
 
             // if during hours, checkout form
@@ -113,26 +113,29 @@ class Login extends React.Component {
             const dayOfWeek = this.state.date.getDay();
             const hours = this.state.date.getHours();
             console.log(hours);
-            if (dayOfWeek>0 && dayOfWeek<6) { //mon-fri
-                if (11<hours && hours<14){ //11-2
+            // dayOfWeek>0 && 
+            if (dayOfWeek<6) { //mon-fri
+                if (13<hours && hours<20){ //11-2
                     customerCheckout = <CustomerCheckout/>;
                 } else {
                     customerCheckout = 
-                <h1>The store is not open at this time. 
+                <h1>SWAP is not open at this time. 
                     Come back later!</h1>;
                 }
             } else {
                 customerCheckout = 
-                <h1>The store is not open at this time. 
+                <h1>SWAP is not open at this time. 
                     Come back later!</h1>;
             }
         }
         return (
             <div>
                 <div id="notLoggedIn">
+                    <nav id="loginRegisterNav">
                     {loginButton}
-                    {form}
                     {register}
+                    </nav>
+                    {form}
                     {customerCheckout}
                 </div>
                 <div id="loggedIn">
