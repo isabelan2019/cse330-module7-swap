@@ -479,8 +479,8 @@ app.post("/login", (req, res) => {
           res.send("error comparing passwords");
         } else {
           // callback(err, same);
-          console.log(user.password);
-          console.log(loginPassword);
+          // console.log(user.password);
+          // console.log(loginPassword);
 
           if (!same) {
             const isLoggedIn = false;
@@ -491,7 +491,7 @@ app.post("/login", (req, res) => {
             res.loggedIn = true;
             res.username = user.username;
             req.session.username = user.username;
-            console.log("cookie", res.username);
+            // console.log("cookie", res.username);
             res.send({ isLoggedIn: isLoggedIn, username: user.username });
           }
         }

@@ -203,24 +203,26 @@ class TransactionsLog extends React.Component {
     }
     return (
       <div>
+        <label for="All">Sort by: </label>
         <input type="button" value="All" onClick={this.getData} />
         <input type="button" value="Last hour" onClick={this.getLastHour} />
         <input type="button" value="Last day" onClick={this.getLastDay} />
         <input type="button" value="Last week" onClick={this.getLastWeek} />
         <input type="button" value="Last month" onClick={this.getLastMonth} />
         <input type="button" value="Last year" onClick={this.getLastYear} />
-        <table>
+        <br/><br/>
+        <table id="transactionsTable">
           <tbody>
             <tr>
-              <th> Date and Time</th>
-              <th> Customer First Name </th>
-              <th> Customer Last Name</th>
-              <th> Customer Email </th>
-              <th> Items</th>
+              <th id="transactionDate" > Date and Time </th>
+              <th> First Name &ensp;</th>
+              <th> Last Name &ensp;</th>
+              <th> Email &ensp;</th>
+              <th> Items &ensp;</th>
             </tr>
             {this.state.transactionsData.map((data) => (
               <tr key={data._id}>
-                <td>{data.date}</td>
+                <td>{data.date} </td>
                 <td> {data.customer[0]} </td>
                 <td> {data.customer[1]}</td>
                 <td> {data.customer[2]} </td>
@@ -228,8 +230,7 @@ class TransactionsLog extends React.Component {
                   <ul>
                     {data.items.map((item) => (
                       <li key={item._id}>
-                        Item: {item.itemName}
-                        Quantity: {item.quantity}
+                        {item.quantity} {item.itemName}
                       </li>
                     ))}
                   </ul>

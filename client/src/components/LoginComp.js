@@ -114,8 +114,8 @@ class Login extends React.Component {
             const hours = this.state.date.getHours();
             console.log(hours);
             // dayOfWeek>0 && 
-            if (dayOfWeek<6) { //mon-fri
-                if (13<hours && hours<20){ //11-2
+            if (dayOfWeek>0 && dayOfWeek<6) { //mon-fri
+                if (11<hours && hours<13){ //11-2
                     customerCheckout = <CustomerCheckout/>;
                 } else {
                     customerCheckout = 
@@ -255,12 +255,13 @@ class EmployeeNav extends React.Component {
         return (
           
         <div>
-            <p>Welcome {sessionStorage.getItem("username")}</p>
-          <nav>
+            <p>Welcome, {sessionStorage.getItem("username")}</p>
+          <nav id="employeeNav">
             <button onClick={this.logout}>Logout</button>
             <button onClick={this.showVerification}>Change Verification </button>
           </nav>
           {verificationForm}
+
         </div>
   
       );
