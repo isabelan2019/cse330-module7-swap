@@ -119,7 +119,7 @@ class Login extends React.Component {
       // dayOfWeek>0 &&
       if (dayOfWeek > 0 && dayOfWeek < 6) {
         //mon-fri
-        if (11 < hours && hours < 16) {
+        if (11 < hours && hours < 11) {
           //11-2
           customerCheckout = <CustomerCheckout />;
         } else {

@@ -335,7 +335,7 @@ app.get("/getLastWeek", (req, res) => {
 app.get("/getLastMonth", (req, res) => {
   let today = new Date();
   const msToday = Date.now(today);
-  const msInMonth = 86400000 * 7 * 30;
+  const msInMonth = 86400000 * 30;
   const dayAgo = Number(msToday) - msInMonth;
   const startDate = new Date(dayAgo);
   Transaction.find(
