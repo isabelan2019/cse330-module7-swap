@@ -248,7 +248,7 @@ class InventoryCategory extends React.Component {
     return (
       <form onSubmit={this.submitHandler}>
         <label>
-          Category:
+          New Category:
           <input
             type="text"
             name="newCategory"
@@ -317,44 +317,13 @@ class InventoryForm extends React.Component {
     };
     this.props.submitInventoryForm(inventoryObj);
   }
-  //   axios
-  //     .post("http://localhost:5000/insertInventory", inventoryObj)
-  //     .then((res) => console.log(res.data));
-
-  //   this.setState({
-  //     category: "",
-  //     itemName: "",
-  //     quantity: "",
-  //   });
-  // }
-
-  // componentDidMount() {
-  //   this.getData();
-  // }
-
-  // getData() {
-  //   axios.get("http://localhost:5000/getAllInventory").then((res) => {
-  //     let allCategories = [];
-  //     const data = res.data;
-  //     console.log(data);
-  //     for (let i in data) {
-  //       allCategories.push(data[i]);
-  //       let allItemTypes = [];
-  //       for (let j in data[i].itemTypes) {
-  //         allItemTypes.push(data[i].itemTypes[j]);
-  //       }
-  //       allCategories[i].itemTypes = allItemTypes;
-  //     }
-  //     this.setState({ inventoryData: allCategories });
-  //   });
-  // }
 
   render() {
     return (
       <form onSubmit={this.submitHandler}>
         {/* change to dropdown */}
         <label>
-          Category:
+          Add Item - 
           {/* <input type="text" name="category" onChange={this.changeHandler} value={this.state.category}/> */}
           <select
             name="category"
@@ -417,65 +386,6 @@ class InventoryDisplay extends React.Component {
     // this.showEdit = this.showEdit.bind(this);
   }
 
-  // changeHandler(event) {
-  //   event.preventDefault();
-  //   this.setState({ newQuantity: event.target.value });
-  // }
-
-  // showEdit(event) {
-  //   event.preventDefault();
-  //   this.setState({ view: true });
-  // }
-  // componentDidMount() {
-  //   this.getData();
-  // }
-
-  // getData() {
-  //   axios.get("http://localhost:5000/getAllInventory").then((res) => {
-  //     let allCategories = [];
-  //     const data = res.data;
-  //     console.log(data);
-  //     for (let i in data) {
-  //       allCategories.push(data[i]);
-  //       let allItemTypes = [];
-  //       for (let j in data[i].itemTypes) {
-  //         allItemTypes.push(data[i].itemTypes[j]);
-  //       }
-  //       allCategories[i].itemTypes = allItemTypes;
-  //     }
-  //     this.setState({ inventoryData: allCategories });
-  //   });
-  // }
-
-  // deleteItem(event) {
-  //   event.preventDefault();
-  //   const itemID = event.target.parentNode.parentNode.id;
-  //   const categoryID =
-  //     event.target.parentNode.parentNode.parentNode.parentNode.parentNode.id;
-  //   const deletedObject = {
-  //     categoryID: categoryID,
-  //     itemID: itemID,
-  //   };
-
-  //   axios
-  //     .post("http://localhost:5000/deleteInventoryItem", deletedObject)
-  //     .then((res) => console.log(res.data));
-  // }
-
-  // editQuantity(event) {
-  //   event.preventDefault();
-  //   const itemID = event.target.parentNode.parentNode.id;
-  //   const categoryID =
-  //     event.target.parentNode.parentNode.parentNode.parentNode.parentNode.id;
-  //   const editObject = {
-  //     categoryID: categoryID,
-  //     itemID: itemID,
-  //   };
-
-  //   axios
-  //     .post("http://localhost:5000/editInventoryQuantity", editObject)
-  //     .then((res) => console.log(res.data));
-  // }
   deleteInventory(item) {
     // const ids = {
     //   itemID: event.target.parentNode.parentNode.id,
@@ -506,18 +416,19 @@ class InventoryDisplay extends React.Component {
         <ul>
           {this.props.displayCategory.map((data) => (
             <li key={data._id} id={data._id}>
-              <h2>{data.category}</h2>
-              <input
+              <h2>{data.category} <input
                 type="button"
                 value="Delete"
                 onClick={this.deleteCategory}
               />
-              <table>
+              </h2>
+              
+              <table id="inventoryTable">
                 <tbody>
                   <tr>
-                    <th> Item Name </th>
-                    <th> Quantity</th>
-                    <th> Actions</th>
+                    <th> Item Name &ensp;</th>
+                    <th> Quantity &ensp;</th>
+                    <th> Actions &ensp;</th>
                   </tr>
                   {data.itemTypes.map((item) => (
                     <InventoryLineItem
@@ -618,9 +529,12 @@ class InventoryLineItem extends React.Component {
     return (
       <tr id={this.props.itemID}>
         <td>{this.props.itemName}</td>
-        <td onClick={this.showEdit}>
+        <td class="inventoryQuantity" onClick={this.showEdit}>
           {this.props.itemQuantity}{" "}
-          {this.state.view && (
+          
+        </td>
+        <td>
+        {this.state.view && (
             <input
               type="number"
               name="newQuantity"
@@ -628,8 +542,6 @@ class InventoryLineItem extends React.Component {
               onChange={this.changeHandler}
             />
           )}
-        </td>
-        <td>
           <input
             type="button"
             onClick={this.editHandler}
