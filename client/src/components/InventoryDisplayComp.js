@@ -425,13 +425,8 @@ class InventoryDisplay extends React.Component {
                   onClick={this.deleteCategory}
                 />
               </h2>
-<<<<<<< HEAD
 
               <table>
-=======
-              
-              <table class="inventoryTable">
->>>>>>> d8539d6aff23f03e7aa6de04011f9342a4cdca83
                 <tbody>
                   <tr>
                     <th> Item Name &ensp;</th>

@@ -199,11 +199,7 @@ class TransactionsLog extends React.Component {
     }
     return (
       <div>
-<<<<<<< HEAD
         <label htmlFor="All">Sort by: </label>
-=======
-        <p>Sort by: </p>
->>>>>>> d8539d6aff23f03e7aa6de04011f9342a4cdca83
         <input type="button" value="All" onClick={this.getData} />
         <input type="button" value="Last hour" onClick={this.getLastHour} />
         <input type="button" value="Last day" onClick={this.getLastDay} />
