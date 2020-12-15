@@ -335,7 +335,7 @@ app.get("/getLastWeek", (req, res) => {
 app.get("/getLastMonth", (req, res) => {
   let today = new Date();
   const msToday = Date.now(today);
-  const msInMonth = 86400000 * 7 * 30;
+  const msInMonth = 86400000 * 30;
   const dayAgo = Number(msToday) - msInMonth;
   const startDate = new Date(dayAgo);
   Transaction.find(
@@ -399,6 +399,7 @@ app.post("/deleteInventoryItem", (req, res) => {
 });
 
 app.post("/deleteCategory", (req, res) => {
+  console.log(req.body.categoryID);
   const categoryID = req.body.categoryID;
   InventoryItem.findByIdAndDelete(categoryID, function (err, data) {
     if (err) {
