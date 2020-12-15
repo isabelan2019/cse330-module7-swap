@@ -68,7 +68,7 @@ class CustomerCheckout extends React.Component {
     event.preventDefault();
     const items = this.state.items;
     for (let key in items) {
-      if (items[key].quantity == 0) {
+      if (items[key].quantity === 0) {
         delete items[key];
       }
     }
@@ -176,7 +176,7 @@ class CustomerCheckout extends React.Component {
             Email:
             <input onChange={this.changeHandler} type="text" name="email" />
           </label>
-          <ul>
+          <ul id="checkoutInventory">
             {this.state.inventoryData.map((data) => (
               <li key={data._id} id={data._id}>
                 <h2>{data.category}</h2>
@@ -190,18 +190,15 @@ class CustomerCheckout extends React.Component {
                       <tr key={item._id}>
                         <td>
                           {item.itemName}
+                        </td>
+                        <td>
                           <ItemLine
                             categoryID={data._id}
                             itemID={item._id}
                             itemName={item.itemName}
                             handleQuantityChange={this.handleQuantityChange}
                             maxQuantity={item.quantity}
-                          />
-                          {/* <input
-                            type="hidden"
-                            name={"itemName/" + item._id}
-                            value={item.itemName}
-                          /> */}
+                          />                  
                         </td>
                         {/* <td>
                           <ItemLine />
@@ -314,7 +311,7 @@ class ItemLine extends React.Component {
 class Summary extends React.Component {
   render() {
     return (
-      <div>
+      <div id="summary">
         <h2>Thank you for coming to SWAP, {this.props.firstName}!</h2>
         <p>Today, you got: </p>
         <ul>

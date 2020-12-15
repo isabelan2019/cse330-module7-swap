@@ -36,6 +36,7 @@ class NavBar extends React.Component {
                 {" "}
                 <Link style={{ textDecoration: 'none' }} to="/inventory">Inventory Log</Link>
               </button>
+              <br/><br/>
             </nav>
             <Switch>
               <Route path="/checkout" component={CustomerCheckout} />
@@ -43,6 +44,7 @@ class NavBar extends React.Component {
               <Route path="/inventory" component={InventoryDisplay} />
             </Switch>
           </Router>
+          
         </div>
       );
     }

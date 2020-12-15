@@ -255,12 +255,13 @@ class EmployeeNav extends React.Component {
         return (
           
         <div>
-            <p>Welcome {sessionStorage.getItem("username")}</p>
-          <nav>
+            <p>Welcome, {sessionStorage.getItem("username")}</p>
+          <nav id="employeeNav">
             <button onClick={this.logout}>Logout</button>
             <button onClick={this.showVerification}>Change Verification </button>
           </nav>
           {verificationForm}
+          
         </div>
   
       );
