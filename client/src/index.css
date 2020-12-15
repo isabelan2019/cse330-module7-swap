@@ -58,6 +58,16 @@ a:visited {
 #transactionDate {
   width: 230px;
 }
+.link {
+  background-color: darkseagreen; /* Green */
+  border: none;
+  color: white;
+  text-decoration: none;
+  margin: 4px 6px;
+  font-size: 10px;
+  padding: 6px 6px;
+  /* border-top: 10px; */
+}
 
 @media screen and (max-width:320px){
   form {
@@ -75,7 +85,7 @@ a:visited {
   #checkoutInventory, #summary {
     margin-bottom: 40px;
   }
-  #inventoryTable th {
+  .inventoryTable th {
     vertical-align: top;
   }
 }

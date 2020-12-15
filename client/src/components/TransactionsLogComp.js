@@ -203,7 +203,7 @@ class TransactionsLog extends React.Component {
     }
     return (
       <div>
-        <label for="All">Sort by: </label>
+        <p>Sort by: </p>
         <input type="button" value="All" onClick={this.getData} />
         <input type="button" value="Last hour" onClick={this.getLastHour} />
         <input type="button" value="Last day" onClick={this.getLastDay} />
