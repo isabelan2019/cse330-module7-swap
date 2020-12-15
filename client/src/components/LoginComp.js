@@ -256,7 +256,7 @@ class EmployeeNav extends React.Component {
           
         <div>
             <p>Welcome, {sessionStorage.getItem("username")}</p>
-          <nav id="employeeNav">
+          <nav id="loggedInNav">
             <button onClick={this.logout}>Logout</button>
             <button onClick={this.showVerification}>Change Verification </button>
           </nav>

@@ -24,18 +24,10 @@ class NavBar extends React.Component {
               {/* <button>
                 <Link to="/">Home</Link>
               </button> */}
-              <button>
-                {" "}
-                <Link style={{ textDecoration: 'none' }} to="/checkout">Checkout</Link>
-              </button>
-              <button>
-                {" "}
-                <Link style={{ textDecoration: 'none' }} to="/transactions">Transactions</Link>{" "}
-              </button>
-              <button>
-                {" "}
-                <Link style={{ textDecoration: 'none' }} to="/inventory">Inventory Log</Link>
-              </button>
+              <br/>
+              <Link class="link"  to="/checkout">Checkout</Link>
+              <Link class="link"  to="/transactions">Transactions</Link>
+              <Link class="link"  to="/inventory">Inventory Log</Link>
               <br/><br/>
             </nav>
             <Switch>

@@ -423,7 +423,7 @@ class InventoryDisplay extends React.Component {
               />
               </h2>
               
-              <table id="inventoryTable">
+              <table class="inventoryTable">
                 <tbody>
                   <tr>
                     <th> Item Name &ensp;</th>

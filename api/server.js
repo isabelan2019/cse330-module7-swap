@@ -17,7 +17,7 @@ const session = require("cookie-session");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const cryptoRandom = crypto.randomBytes(64).toString("hex");
-const withAuth = require("./token");
+// const withAuth = require("./token");
 
 // const MongoClient = require('mongodb').MongoClient;
 // const assert = require('assert');
