@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 import "./../index.css";
 
-
 class TransactionsLog extends React.Component {
   constructor(props) {
     super(props);
@@ -161,7 +160,7 @@ class TransactionsLog extends React.Component {
       this.setState({ transactionsData: allTransactions });
     });
   }
-  sortDate(){
+  sortDate() {
     // const obj = "date";
     // axios.get("http://localhost:5000/getTransactions", obj).then((res) => {
     //   let allTransactions = [];
@@ -183,11 +182,8 @@ class TransactionsLog extends React.Component {
     //   }
     //   this.setState({ transactionsData: allTransactions });
     // });
-  
   }
-  sortName(){
-
-  }
+  sortName() {}
 
   render() {
     console.log(this.state.transactionsData);
@@ -203,18 +199,19 @@ class TransactionsLog extends React.Component {
     }
     return (
       <div>
-        <label for="All">Sort by: </label>
+        <label htmlFor="All">Sort by: </label>
         <input type="button" value="All" onClick={this.getData} />
         <input type="button" value="Last hour" onClick={this.getLastHour} />
         <input type="button" value="Last day" onClick={this.getLastDay} />
         <input type="button" value="Last week" onClick={this.getLastWeek} />
         <input type="button" value="Last month" onClick={this.getLastMonth} />
         <input type="button" value="Last year" onClick={this.getLastYear} />
-        <br/><br/>
+        <br />
+        <br />
         <table id="transactionsTable">
           <tbody>
             <tr>
-              <th id="transactionDate" > Date and Time </th>
+              <th id="transactionDate"> Date and Time </th>
               <th> First Name &ensp;</th>
               <th> Last Name &ensp;</th>
               <th> Email &ensp;</th>

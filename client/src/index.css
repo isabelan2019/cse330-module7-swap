@@ -11,7 +11,7 @@ h1 {
   display: flex;
   flex-direction: row;
 }
-form *{
+form * {
   margin: 2px 2px;
 }
 button {
@@ -26,7 +26,8 @@ button {
   margin-top: 2px;
   margin-right: 2px;
 }
-input[type="submit"], input[type="button"] {
+input[type="submit"],
+input[type="button"] {
   background-color: darkseagreen; /* Green */
   border: none;
   color: #f9f9f9;
@@ -37,12 +38,11 @@ input[type="submit"], input[type="button"] {
 }
 input[type="number"] {
   width: 40px;
-
 }
 .inventoryQuantity {
   text-align: center;
 }
-#employeeNav button{
+#employeeNav button {
   background-color: darkseagreen; /* Green */
   border: none;
   color: white;
@@ -52,14 +52,14 @@ input[type="number"] {
 a:visited {
   color: white;
 }
-#transactionsTable th{
+#transactionsTable th {
   text-align: left;
 }
 #transactionDate {
   width: 230px;
 }
 
-@media screen and (max-width:320px){
+@media screen and (max-width: 375px) {
   form {
     display: flex;
     flex-direction: column;
@@ -67,16 +67,26 @@ a:visited {
   }
 
   input[value="Checkout"] {
-    position: fixed ;
+    position: fixed;
     bottom: 0px;
     width: 92%;
     /* margin-right: 6px; */
   }
-  #checkoutInventory, #summary {
+  #checkoutInventory,
+  #summary {
     margin-bottom: 40px;
   }
   #inventoryTable th {
     vertical-align: top;
   }
+  #inventoryTable {
+    font-size: x-small;
+  }
+  #transactionsTable {
+    font-size: 7px;
+  }
+  #newCategoryForm {
+    display: flex;
+    flex-direction: column;
+  }
 }
-
