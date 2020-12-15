@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 import "./../index.css";
 
-
 class CustomerCheckout extends React.Component {
   constructor(props) {
     super(props);
@@ -68,7 +67,8 @@ class CustomerCheckout extends React.Component {
     event.preventDefault();
     const items = this.state.items;
     for (let key in items) {
-      if (items[key].quantity === 0) {
+      if (items[key].quantity === "0") {
+        console.log(items[key].quantity);
         delete items[key];
       }
     }
@@ -188,9 +188,7 @@ class CustomerCheckout extends React.Component {
                     </tr>
                     {data.itemTypes.map((item) => (
                       <tr key={item._id}>
-                        <td>
-                          {item.itemName}
-                        </td>
+                        <td>{item.itemName}</td>
                         <td>
                           <ItemLine
                             categoryID={data._id}
@@ -198,7 +196,7 @@ class CustomerCheckout extends React.Component {
                             itemName={item.itemName}
                             handleQuantityChange={this.handleQuantityChange}
                             maxQuantity={item.quantity}
-                          />                  
+                          />
                         </td>
                         {/* <td>
                           <ItemLine />
