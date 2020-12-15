@@ -399,6 +399,7 @@ app.post("/deleteInventoryItem", (req, res) => {
 });
 
 app.post("/deleteCategory", (req, res) => {
+  console.log(req.body.categoryID);
   const categoryID = req.body.categoryID;
   InventoryItem.findByIdAndDelete(categoryID, function (err, data) {
     if (err) {
