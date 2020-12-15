@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 import "./../index.css";
 
-
 class InventoryPage extends React.Component {
   constructor(props) {
     super(props);
@@ -246,7 +245,8 @@ class InventoryCategory extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.submitHandler}>
+      <form id="newCategoryForm" onSubmit={this.submitHandler}>
+        <h3> Add a New Category</h3>
         <label>
           New Category:
           <input
@@ -320,10 +320,11 @@ class InventoryForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.submitHandler}>
+      <form id="newItemForm" onSubmit={this.submitHandler}>
         {/* change to dropdown */}
+        <h3> Add a New Item</h3>
         <label>
-          Add Item - 
+          Category:
           {/* <input type="text" name="category" onChange={this.changeHandler} value={this.state.category}/> */}
           <select
             name="category"
@@ -413,17 +414,19 @@ class InventoryDisplay extends React.Component {
     }
     return (
       <div>
-        <ul>
+        <ul id="inventoryTable">
           {this.props.displayCategory.map((data) => (
             <li key={data._id} id={data._id}>
-              <h2>{data.category} <input
-                type="button"
-                value="Delete"
-                onClick={this.deleteCategory}
-              />
+              <h2>
+                {data.category}{" "}
+                <input
+                  type="button"
+                  value="Delete"
+                  onClick={this.deleteCategory}
+                />
               </h2>
-              
-              <table class="inventoryTable">
+
+              <table>
                 <tbody>
                   <tr>
                     <th> Item Name &ensp;</th>
@@ -529,12 +532,11 @@ class InventoryLineItem extends React.Component {
     return (
       <tr id={this.props.itemID}>
         <td>{this.props.itemName}</td>
-        <td class="inventoryQuantity" onClick={this.showEdit}>
+        <td className="inventoryQuantity" onClick={this.showEdit}>
           {this.props.itemQuantity}{" "}
-          
         </td>
         <td>
-        {this.state.view && (
+          {this.state.view && (
             <input
               type="number"
               name="newQuantity"
